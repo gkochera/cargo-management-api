@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>George Kochera - Final Project - CS 493</title>
+        <link rel='stylesheet' href='./css/style.css'/>
+    </head>
+    <body>
+        <%- include('../partials/header'); %>
+        <h2 style="color: red;">Oh no! There was an error!</h3>
+        <% if (error === "stateMismatch") { %>
+            <h3>Your states don't match.</h3>
+            <table>
+                <tr>
+                    <th>Sent</th>
+                </tr>
+                <tr>
+                    <td><%= state.sent %></td>
+                </tr>
+                <tr>
+                    <th>Received</th>
+                </tr>
+                <tr>
+                    <td><%= state.received %></td>
+                </tr>
+            </table>
+        <% } %>
+        <% if (error === "attemptedRefresh") { %>
+            <h3>Did you try to refresh the page? You can't do that.</h3>
+        <% } %>
+        <div class='button'>
+            <a href="/"><button>Go home!</button></a>
+        </div>
+    </body>
+</html>
+

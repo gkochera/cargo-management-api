@@ -114,7 +114,7 @@ async function verifyJWT(req, res, next) {
 
         // The parameters required by the Google OAuth 2.0 endpoint.
         let params = {
-            client_id: "157212195746-bd9c1dckf9db2uojj5tltohqquc3hq9d.apps.googleusercontent.com",
+            client_id: "937934225644-mrmug3ed0lum6ppivqvvs4fj40b3s0q8.apps.googleusercontent.com",
             redirect_uri: getFullURL(req) + "/oauth",
             response_type: "code",
             scope: "https://www.googleapis.com/auth/userinfo.profile",
@@ -163,8 +163,8 @@ async function getToken (req, res, next) {
 
     // Form the access_token request query.
     let params = {
-        client_id: "157212195746-bd9c1dckf9db2uojj5tltohqquc3hq9d.apps.googleusercontent.com",
-        client_secret: "-QArd1VuBEgL_xDQwU6Pz36l",
+        client_id: "937934225644-mrmug3ed0lum6ppivqvvs4fj40b3s0q8.apps.googleusercontent.com",
+        client_secret: "IM_IW9sEWBqeWV9DwAKmj1sT",
         code: req.cookies.state.code,
         grant_type: "authorization_code",
         redirect_uri: getFullURL(req) + "/oauth"
@@ -347,6 +347,6 @@ app.get('/', (req, res) => {
 /**
  *  LISTENER
  */
-app.listen(process.env.PORT || 8080, () => {
+app.listen(process.env.PORT || 8000, () => {
     console.log("CS493 Final Project is running!");
 })
