@@ -1,0 +1,1 @@
+rm ~/.config/gcloud/emulators/datastore/WEB-INF/appengine-generated/local_db.bin
