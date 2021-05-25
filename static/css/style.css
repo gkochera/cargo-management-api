@@ -9,6 +9,10 @@ h4 {
     background-color: rgb(218, 226, 181);
 }
 
+html {
+    min-height: 100%;
+}
+
 body {
     font-family: sans;
     height: 100%;
