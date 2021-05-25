@@ -41,6 +41,10 @@ table {
     margin: auto;
 }
 
+.container p  {
+    margin: 40px 0 0 0;
+}
+
 td, span {
     font-size: 1.25rem;
     background-color: #4f4f4f;

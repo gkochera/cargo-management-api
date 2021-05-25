@@ -19,25 +19,9 @@
                     </tr>
                 </table>
             <p>Your first name is <span class='name'><%= data.firstName %></span> and your last name is 
-                <span class='name'><%= data.lastName %></span>. Your states are the same too!</p>
-            <table>
-                <tr>
-                    <th>Sent</th>
-                </tr>
-                <tr>
-                    <td><%= data.state.sent %></td>
-                </tr>
-                <tr>
-                    <th>Received</th>
-                </tr>
-                <tr>
-                    <td><%= data.state.received %></td>
-                </tr>
-            </table>
-            <p>We store the state in a cookie on your machine so it's always specific to you!
-                Open your developer tab when going through this process, and you can see the cookie
-                and the data it contains. Hit the 'Go Home' button to give it another try! Notice the
-                state changes each time.</p>
+                <span class='name'><%= data.lastName %></span>.</p>
+            
+            <p>Your unique Google Subscriber ID is <span class='name'><%= data.sub %></span>.</p>
             <div class='button'>
                 <a href="/"><button>Go home!</button></a>
             </div>
