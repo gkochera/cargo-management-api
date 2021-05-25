@@ -35,6 +35,7 @@ module.exports = class Boat
             this.isPublic = data.body.public;
             this.owner = data.sub;
             this.self = null;
+            this.loads = [],
             this.key = datastore.key('Boat');
             this.requiredAttributes = ['name', 'type', 'length', 'public']
             this.hasAllFields = this._hasAllFields(data);
@@ -48,6 +49,7 @@ module.exports = class Boat
             this.isPublic = data.isPublic;
             this.owner = data.owner;
             this.self = request.protocol + "://" + request.get("host") + "/boats/" + data[datastore.KEY].id;
+            this.loads = data.loads;
             this.key = h.createBoatKey(this.id)
             this.requiredAttributes = ['name', 'type', 'length', 'public']
             this.hasAllFields = true;
@@ -121,6 +123,7 @@ module.exports = class Boat
             name: this.name,
             type: this.type,
             length: this.length,
+            loads: this.loads,
             public: this.isPublic,
             owner: this.owner,
             self: this.self
@@ -136,6 +139,7 @@ module.exports = class Boat
                 name: this.name,
                 type: this.type,
                 length: this.length,
+                loads: this.loads,
                 isPublic: this.isPublic,
                 owner: this.owner
             }
@@ -153,6 +157,7 @@ module.exports = class Boat
         this.name = boatResult.name;
         this.type = boatResult.type;
         this.length = boatResult.length;
+        this.loads = boatResult.loads;
         this.isPublic = boatResult.isPublic;
         this.owner = boatResult.owner;
         this.self = nodeRequest.protocol + "://" + nodeRequest.get("host") + "/boats/" + boatResult[datastore.KEY].id

@@ -74,7 +74,7 @@ app.use(m.verifyJWT)
  *  ROUTES
  */
 app.use('/boats', boats);
-app.use('/loads', boats);
+app.use('/loads', loads);
 app.use('/users', users);
 
 app.get('/', (req, res) => {

@@ -4,6 +4,7 @@
 var datastore = require('./database');
 var express = require('express')
 var router = express.Router();
+var Load = require('./load_class');
 
 
 /*
@@ -25,38 +26,16 @@ router.post('/', async (req, res) => {
     else {
 
         // Construct the key and data for the datastore query
-        var loadKey = datastore.key('Load');
-        var load = {
-            volume: parseInt(req.body.volume),
-            content: req.body.content,
-            creation_date: req.body.creation_date,
-            carrier: null
-        }
-        var entity = {
-            key: loadKey,
-            data: load
-        }
+        var newLoad = new Load(req.body, req)
 
         // Insert the new load
-        await datastore.insert(entity);
+        await newLoad.insert();
 
         // Now get the load back so we can display it
-        const [loadResult] = await datastore.get(loadKey);
-
-        // Add the id and self fields
-        loadResult["id"] = loadResult[datastore.KEY].id.toString();
-        let self = req.protocol + "://" + req.get("host") + req.baseUrl + "/" + loadResult[datastore.KEY].id;
-        loadResult["self"] = self;
+        await newLoad.get(req);
 
         // Send the new load back to the user
-        res.status(201).json({
-            id: loadResult.id,
-            volume: loadResult.volume,
-            carrier: loadResult.carrier,
-            content: loadResult.content,
-            creation_date: loadResult.creation_date,
-            self: loadResult.self
-        })
+        res.status(201).json(newLoad.getLoad());
     }
 })
 
