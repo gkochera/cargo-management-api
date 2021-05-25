@@ -114,7 +114,19 @@ app.get('/', (req, res) => {
         sent: generateState(),
         received: null
     }
-    res.cookie('state', state).render('pages/index')
+
+    if (req.query.e == 1) {
+        res.cookie('state', state).render('pages/index', {message: "alreadyRegistered"})
+        return
+    }
+
+    if (req.query.e == 2) {
+        res.cookie('state', state).render('pages/index', {message: "notRegistered"})
+        return
+    } 
+
+    res.cookie('state', state).render('pages/index', {message: null})
+    return
 })
 
 /**

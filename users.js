@@ -29,14 +29,22 @@ router.get('/login', m.authenticate, m.getToken, async (req, res) => {
         firstName: body.names[0].givenName,
         lastName: body.names[0].familyName,
         state: req.cookies.state,
+        sub: body.names[0].metadata.source.id,
         id_token: res.locals.google.id_token
     }
-    console.log(body);
 
-    // See if the user is in the database
+    // Look for the user in the database
     let query = datastore.createQuery('User')
-    .filter('sub', '=', req.sub);
-    // If they arent, add them
+    .filter('sub', '=', data.sub);
+    let [result] = await datastore.runQuery(query);
+    
+    // See if the user is in the results
+    let isInDatabase = (result.length === 0) ? false : true;
+    if (!isInDatabase)
+    {   
+        res.redirect('/?e=2')
+        return;
+    }
 
     // Render the page
     res.render('pages/userinfo', {data: data})
@@ -68,7 +76,7 @@ router.get('/signup', m.authenticate, m.getToken, async (req, res) => {
     let isInDatabase = (result.length === 0) ? false : true;
     if (isInDatabase)
     {
-        res.render('pages/userinfo', {data: data, message: "alreadyRegistered"})
+        res.redirect('/?e=1')
         return;
     }
 

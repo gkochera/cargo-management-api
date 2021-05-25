@@ -7,6 +7,14 @@
     <body>
         <div class='container'>
             <%- include('../partials/header'); %>
+            <% if (message !== null) { %>
+                <% if (message === "notRegistered") { %>
+                    <h4>You haven't registered yet. Please click 'Sign-Up with Google' below.</h4>
+                <% } %>
+                <% if (message === "alreadyRegistered") { %>
+                    <h4>You're already registered. Please click 'Login with Google' below.</h4>
+                <% } %>
+            <% } %>
             <p>This is the final Portfolio Project for Oregon State University's CS493 Cloud Application Development Class. It consists of a Web Front-End for retrieving a JWT to access our Boats API and the Boats/Loads/Users API itself (accessible with a tool such as Postman or Curl).
             </p>
             <div class='button'>
