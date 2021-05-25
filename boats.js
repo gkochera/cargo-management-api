@@ -27,7 +27,7 @@ var validate = [m.clientMustAcceptJSON, m.bodyKeysToLower, m.bodyMustNotContainE
 /**
  * CREATE A BOAT
  */
-router.post('/', validate, async (req, res) => {
+router.post('/', validate, m.isRegistered, async (req, res) => {
 
     // If the user is authenticated and has a valid JWT...
     if (req.authenticated)

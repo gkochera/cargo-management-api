@@ -16,6 +16,7 @@ let ejs = require('ejs');                       // Templating Engine
 var crypto = require("crypto");                 // Used to generate 'state'
 var cookieParser = require('cookie-parser')     // Use to handle cookies.
 var h = require('./helper');
+var m = require('./middleware');
 var boats = require('./boats');
 var loads = require('./loads');
 var users = require('./users');
@@ -43,41 +44,7 @@ let clientSentJSON = (err, req, res, next) => {
     next()
 }
 
-/**
- *  VERIFIES A WEB TOKEN FROM GOOGLE
- */
- async function verifyJWT(req, res, next) {
 
-    // Get the Authorization header
-    let bearerHeader = req.get('Authorization')
-    if (bearerHeader !== undefined) 
-    {
-        // Split the Bearer from the token and test that it actually is a Bearer token.
-        var parts = bearerHeader.split(' ');
-        var token;
-        if (parts.length === 2) {
-            var scheme = parts[0];
-            var credentials = parts[1];
-
-            if (/^Bearer$/i.test(scheme)) {
-            token = credentials;
-            }
-        }
-        
-        // We call validateJWT to check the token against the Google Public Key, since its
-        // asynchronous, we must wait for it. Req.authenticated will either be true or false.
-        let tokenValidation = await h.validateJWT(token)
-        req.authenticated = tokenValidation.result
-        req.sub = tokenValidation.sub
-        return next();
-
-    }
-    
-    // If there is no bearer token, we know this is not an authenticated request.
-    req.authenticated = false;
-    return next();
-
-}
 
 /**
  * HELPERS
@@ -101,7 +68,7 @@ app.set('view engine', 'ejs')
 app.use(express.json())
 app.use(clientSentJSON);
 app.use(cookieParser());
-app.use(verifyJWT)
+app.use(m.verifyJWT)
 
 /**
  *  ROUTES

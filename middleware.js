@@ -1,6 +1,8 @@
 let querystring = require('querystring');       // Parses query strings so we don't have to do a ton of string manipulation
 let got = require('got');                       // Modern request library for crafting and sending requests. Used since 'request'
                                                 // library is deprecated.
+let h = require('./helper');
+const datastore = require('./database');
 /**
  *  HELPER MIDDLEWARE
  */
@@ -215,7 +217,70 @@ async function getToken (req, res, next) {
     next()
 }
 
+/**
+ *  VERIFIES A WEB TOKEN FROM GOOGLE
+ */
+ async function verifyJWT(req, res, next) {
 
+    // Get the Authorization header
+    let bearerHeader = req.get('Authorization')
+    if (bearerHeader !== undefined) 
+    {
+        // Split the Bearer from the token and test that it actually is a Bearer token.
+        var parts = bearerHeader.split(' ');
+        var token;
+        if (parts.length === 2) {
+            var scheme = parts[0];
+            var credentials = parts[1];
+
+            if (/^Bearer$/i.test(scheme)) {
+            token = credentials;
+            }
+        }
+        
+        // We call validateJWT to check the token against the Google Public Key, since its
+        // asynchronous, we must wait for it. Req.authenticated will either be true or false.
+        let tokenValidation = await h.validateJWT(token)
+        req.authenticated = tokenValidation.result
+        req.sub = tokenValidation.sub
+
+        // See if the JWT belongs to a registered user
+        let userQuery = datastore.createQuery('User').filter('sub', '=', req.sub);
+        let [userResults] = await datastore.runQuery(userQuery);
+        if (userResults.length > 0)
+        {
+            req.isRegistered = true;
+        }
+        else
+        {
+            req.isRegistered = false;
+        }
+
+        return next();
+
+    }
+    
+    // If there is no bearer token, we know this is not an authenticated request.
+    req.authenticated = false;
+    req.isRegistered = false;
+    return next();
+}
+
+/**
+ * Checks to see if a person is registered
+ */
+
+function isRegistered(req, res, next) {
+    if (req.isRegistered)
+    {
+        return next();
+    }
+
+    res.status(403).json({
+        Error: "You must register before using this endpoint."
+    })
+    return;
+}
 
 
 /**
@@ -234,5 +299,7 @@ module.exports = {
     getToken,
     bodyKeysToLower,
     bodyMustNotContainExtraAttributes,
-    clientMustAcceptJSON
+    clientMustAcceptJSON,
+    verifyJWT,
+    isRegistered
 }
