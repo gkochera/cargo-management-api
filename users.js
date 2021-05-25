@@ -15,6 +15,12 @@ var router = express.Router();
 var h = require('./helper');
 var m = require('./middleware');
 
+
+/**
+ * WEB INTERFACE ROUTES
+ */
+
+
 /**
  * LOGIN ROUTE
  */
@@ -81,12 +87,26 @@ router.get('/signup', m.authenticate, m.getToken, async (req, res) => {
     }
 
     // Add the user to the database if they're not in it
-    let newUser = new User(data.sub, data.firstName, data.lastName);
+    let newUser = new User(data);
     newUser.insert();
 
     // Display their information
     res.render('pages/welcome', {data: data})
 
+})
+
+/**
+ * API ROUTES
+ * ! UNPROTECTED ROUTE !
+ */
+
+router.get('/', async (req, res) =>{
+    let query = datastore.createQuery('User')
+    let [result] = await datastore.runQuery(query);
+    let users = result.map(user => {
+        return new User(user, req, true).getUser();
+    })
+    res.status(200).json(users)
 })
 
 /**

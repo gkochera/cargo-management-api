@@ -22,12 +22,26 @@ var h = require('./helper');
 
 module.exports = class User
     {
-        constructor(sub, first_name, last_name)
+        constructor(data, request=null, gDatastore=false)
         {
-            this.sub = sub;
-            this.first_name = first_name;
-            this.last_name = last_name;
-            this.key = datastore.key('User');
+            if (gDatastore)
+            {
+                this.id = data[datastore.KEY].id.toString()
+                this.sub = data.sub;
+                this.first_name = data.first_name;
+                this.last_name = data.last_name;
+                this.key = data[datastore.KEY];
+                this.self = request.protocol + "://" + request.get("host") + "/users/" + data[datastore.KEY].id;
+            }
+            else
+            {
+                this.id = null;
+                this.sub = data.sub;
+                this.first_name = data.firstName;
+                this.last_name = data.lastName;
+                this.key = datastore.key('User');
+                this.self = null;
+            }
         }
 
         async insert()
@@ -44,5 +58,18 @@ module.exports = class User
     
             // Insert the new boat
             await datastore.insert(entity);
+        }
+
+        /**
+         * Returns a user object without metadata
+         */
+        getUser() {
+            return {
+                id: this.id,
+                sub: this.sub,
+                first_name: this.first_name,
+                last_name: this.last_name,
+                self: this.self
+            }
         }
     }
