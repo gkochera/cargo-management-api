@@ -15,6 +15,7 @@ let ejs = require('ejs');                       // Templating Engine
 
 var crypto = require("crypto");                 // Used to generate 'state'
 var cookieParser = require('cookie-parser')     // Use to handle cookies.
+var h = require('./helper');
 var boats = require('./boats');
 var loads = require('./loads');
 var users = require('./users');
@@ -65,7 +66,7 @@ let clientSentJSON = (err, req, res, next) => {
         
         // We call validateJWT to check the token against the Google Public Key, since its
         // asynchronous, we must wait for it. Req.authenticated will either be true or false.
-        let tokenValidation = await validateJWT(token)
+        let tokenValidation = await h.validateJWT(token)
         req.authenticated = tokenValidation.result
         req.sub = tokenValidation.sub
         return next();
