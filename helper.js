@@ -59,9 +59,9 @@ function keysAreEqual(key1, key2){
  */
 function pageNumberHandler(pageNumber, query){
     if (pageNumber !== undefined && pageNumber > 1) {
-        return query.offset(3 * (pageNumber - 1)).limit(3);
+        return query.offset(5 * (pageNumber - 1)).limit(5);
     } else {
-        return query.limit(3);
+        return query.limit(5);
     }
 }
 

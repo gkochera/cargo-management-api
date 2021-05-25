@@ -102,7 +102,8 @@ router.get('/', async (req, res) => {
     // If the JWT is not valid or missing..
     let query = datastore.createQuery('Boat')
         .filter('isPublic', '=', true);
-    let [result] = await datastore.runQuery(query);
+
+    let [result] = await h.paginate(req, query);
     let boats = result.map(boat => {
         if (!boat.hasOwnProperty('next'))
         {
