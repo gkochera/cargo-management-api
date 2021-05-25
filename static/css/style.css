@@ -11,7 +11,7 @@ h4 {
 
 body {
     font-family: sans;
-    height: 100vh;
+    height: 100%;
     background-image: linear-gradient(
     #f7fce8 60%,
     #bfc995 100%
