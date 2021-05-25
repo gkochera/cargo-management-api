@@ -10,80 +10,33 @@
 */
 
 var datastore = require('./database');
+let got = require('got');                       // Modern request library for crafting and sending requests. Used since 'request'
+                                                // library is deprecated.
+var jwt = require('jsonwebtoken');              // Used to verify the JWT
+var jwksClient = require('jwks-rsa');
 
-
-/**
- *  HELPER MIDDLEWARE
- */
-
-
-/**
- * Enforces that the client must accept a Content-Type of 'application/json' by examining the HTTP request header.
- */
- var clientMustAcceptJSON = (req, res, next) => {
-
-    if (req.accepts('json'))
-    {
-        next()
-    }
-    else
-    {
-        let code = 406;
-        let error = {Error: "This endpoint only supports a Content-Type of application/json, please check your HTTP Accept headers."};
-        res.status(code).json(error);
-    }
-}
-
-/**
- * Enforces that the received JSON must not contain properties other than the ones in validKeys.
- * 
- * Valid Keys are name, type and length.
- * 
- * Example: User attempts to modify id in a request, an HTTP 400 will be returned.
- */
-var bodyMustNotContainExtraAttributes = (req, res, next) => {
-
-    const validKeys = ['name', 'type', 'length', 'public']
-    const bodyKeys = Object.keys(req.body);
-    let badKey = false;
-    bodyKeys.map(key => {
-
-        if (!validKeys.includes(key)) {
-            let code = 400;
-            let error = {Error: `${key} is not a valid property for this endpoint. Check your request body for extra attributes.`}
-            badKey = true;
-            res.status(code).json(error)
-        }
-    })
-
-    if (!badKey)
-    {
-        next()
-    }
-}
-
-/**
- * Converts a JS object with any UPPERCASE keys to lowercase.
- */
-var bodyKeysToLower = (req, res, next) => {
-    const body = req.body
-
-    let keys = Object.keys(body);
-
-    let newBody = {};
-
-    keys.map(key => {
-        newBody[key.toLowerCase()] = body[key];
-    })
-    
-    req.body = newBody;
-    
-    next()
-}
 
 /*
     HELPER FUNCTIONS
 */
+
+
+/**
+ * Gets the Google Public RSA Keys
+ * Source: From the 'jsonwebtoken' repo on GitHub
+ */
+
+ function getKey(header, callback){
+    var client = jwksClient({
+        jwksUri: 'https://www.googleapis.com/oauth2/v3/certs'
+    })
+
+    client.getSigningKey(header.kid, function(err, key) {
+        var signingKey = key.publicKey || key.rsaPublicKey;
+        callback(null, signingKey);
+    });
+}
+
 
 /**
  * Takes two datastore.KEY objects and returns true if they are equal.
@@ -230,6 +183,51 @@ function requestIsValid(req, res) {
     return true
 }
 
+/**
+ * ASYNC
+ * Makes a request to the Google People API to retrieved the 
+ * current logged in user's 'names' data.
+ */
+ async function getGoogleInformation(res) {
+    let options = {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + res.locals.google.access_token
+        }
+    }
+    let response = await got("https://people.googleapis.com/v1/people/me?personFields=names", options)
+    return response
+}
+
+/**
+ * Verifies a JWT's validity
+ */
+ function validateJWT(token) {
+
+    // Since this is an async event, we create a promise that is fulfilled based
+    // on if the token was valid or not.
+    var promise = new Promise((resolve, reject) => {
+
+        // Verify the token is valid, or not. Then reject or resolve the Promise
+        // based on the outcome.
+        jwt.verify(token, getKey, (err, decode) => {
+            if (err)
+            {
+                console.log('FAIL', err)
+                reject({result: false, sub: null});
+            }
+            else
+            {
+                console.log('PASS', decode)
+                resolve({result: true, sub: decode.sub});
+            }
+        })  
+    })
+
+    // Return the promise which we will await on for the result.
+    return promise.then((result) => {return result}, (result) => {return result})
+}
+
 module.exports = {
     keysAreEqual,
     pageNumberHandler,
@@ -237,7 +235,6 @@ module.exports = {
     createBoatKey,
     existsBoatWithSameName,
     requestIsValid,
-    bodyKeysToLower,
-    bodyMustNotContainExtraAttributes,
-    clientMustAcceptJSON
+    getGoogleInformation,
+    validateJWT
 }

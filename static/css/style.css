@@ -2,6 +2,13 @@ h1, h2, h3, h4, h5, h6, h7 {
     text-align: center;
 }
 
+h4 {
+    color: #3a4100;
+    border: 3px solid;
+    padding: 10px;
+    background-color: rgb(218, 226, 181);
+}
+
 body {
     font-family: sans;
     height: 100vh;
