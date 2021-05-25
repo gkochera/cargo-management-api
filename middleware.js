@@ -282,7 +282,6 @@ function isRegistered(req, res, next) {
     return;
 }
 
-
 /**
  * Returns the string of the host URI including the protocol.
  */

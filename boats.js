@@ -27,7 +27,7 @@ var validate = [m.clientMustAcceptJSON, m.bodyKeysToLower, m.bodyMustNotContainE
 /**
  * CREATE A BOAT
  */
-router.post('/', validate, m.isRegistered, async (req, res) => {
+router.post('/', validate, async (req, res) => {
 
     // If the user is authenticated and has a valid JWT...
     if (req.authenticated)
@@ -84,10 +84,16 @@ router.get('/', async (req, res) => {
         let query = datastore.createQuery('Boat')
             .filter('owner', '=', req.sub);
         
-        let [result] = await datastore.runQuery(query);
+        let [result] = await h.paginate(req, query);
+
         let boats = result.map(boat => {
-            let newBoat = new Boat(boat, req);
-            return newBoat.getBoat();
+            if (!boat.hasOwnProperty('next'))
+            {
+                let newBoat = new Boat(boat, req);
+                return newBoat.getBoat();
+            }
+            return boat;
+    
         })
         res.status(200).json(boats)
         return;
@@ -98,8 +104,13 @@ router.get('/', async (req, res) => {
         .filter('isPublic', '=', true);
     let [result] = await datastore.runQuery(query);
     let boats = result.map(boat => {
-        let newBoat = new Boat(boat, req);
-        return newBoat.getBoat();
+        if (!boat.hasOwnProperty('next'))
+        {
+            let newBoat = new Boat(boat, req);
+            return newBoat.getBoat();
+        }
+        return boat;
+
     })
     res.status(200).json(boats)
     return

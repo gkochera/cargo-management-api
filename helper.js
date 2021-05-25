@@ -57,12 +57,45 @@ function keysAreEqual(key1, key2){
  * 
  * Returns an empty array if the page contains no items (page beyond the results)
  */
-function pageNumberHandler(pageNumber, queryKind){
+function pageNumberHandler(pageNumber, query){
     if (pageNumber !== undefined && pageNumber > 1) {
-        return datastore.createQuery(queryKind).offset(3 * (pageNumber - 1)).limit(3);
+        return query.offset(3 * (pageNumber - 1)).limit(3);
     } else {
-        return datastore.createQuery(queryKind).limit(3);
+        return query.limit(3);
     }
+}
+
+/**
+ * Pagination helper
+ */
+
+async function paginate(nodeRequest, query){
+    let pageNumber = nodeRequest.query.page;
+    
+    // Create and run a query to get all the boats
+    let newQuery = pageNumberHandler(pageNumber, query)
+    const results = await datastore.runQuery(newQuery);
+    
+    // Hacky workaround to see if there are results on the next page
+    // Google Cloud has a weird bug where 'moreResults' is always === MORE_RESULTS_AFTER_LIMIT
+    // Bug Link: https://github.com/googleapis/google-cloud-datastore/issues/130
+    let nextQuery = pageNumberHandler(parseInt(pageNumber) + 1, query)
+    const nextResults = await datastore.runQuery(nextQuery);
+
+    // Add the next property if required (based on the next page actually having results)
+    if (nextResults[0].length) {
+        if (pageNumber === undefined) {
+            results[0].push({
+                "next": nodeRequest.protocol + "://" + nodeRequest.get("host") + nodeRequest.baseUrl + "?page=2"
+            })
+        } else {
+            results[0].push({
+                "next": nodeRequest.protocol + "://" + nodeRequest.get("host") + nodeRequest.baseUrl + "?page=" + (parseInt(pageNumber) + 1)
+            })
+        }
+
+    }
+    return results;
 }
 
 /**
@@ -236,5 +269,6 @@ module.exports = {
     existsBoatWithSameName,
     requestIsValid,
     getGoogleInformation,
-    validateJWT
+    validateJWT,
+    paginate
 }
