@@ -21,6 +21,7 @@
 var http = require('http')
 var datastore = require('./database');
 var h = require('./helper');
+var Load = require('./load_class')
 
 module.exports = class Boat
 {
@@ -53,6 +54,7 @@ module.exports = class Boat
             this.key = h.createBoatKey(this.id)
             this.requiredAttributes = ['name', 'type', 'length', 'public']
             this.hasAllFields = true;
+            
         }
 
     }
@@ -69,13 +71,27 @@ module.exports = class Boat
     }
 
     /**
+     * Retrieves all the loads for the boat
+     */
+    async _retrieveLoads(nodeRequest)
+    {
+        // Get the actual load for each of the stored load keys
+        this.loads = await Promise.all(this.loads.map(async (load) => {
+            let [loadResult] = await datastore.get(load);
+            let loadObject = new Load(loadResult, nodeRequest);
+
+            return loadObject.getLoadWithoutCarrier();
+        }));
+    }
+
+    /**
      * Updates the fields in a Boat object.
      * @param {req.body} requestBody An express req.body object.
      * @returns true if at least one field is present.
      */
-    updateFields(requestBody)
+    updateFields(request)
     {
-        let keys = Object.keys(requestBody);
+        let keys = Object.keys(request.body);
 
         if (keys.length < 1)
         {
@@ -85,7 +101,7 @@ module.exports = class Boat
         keys.map(key => {
             if (this.hasOwnProperty(key))
             {
-                this[key] = requestBody[key];
+                this[key] = request.body[key];
             }
         })
 
@@ -97,27 +113,26 @@ module.exports = class Boat
     
     /**
      * Updates all fields in a boat object. If all fields are not included in the request body this function will fail.
-     * @param {req.body} requestBody 
+     * @param {req.body} request 
      * @returns true iff all fields are inlcuded in the request body.
      */
-    updateAllFields(requestBody)
+    updateAllFields(request)
     {
-        let keys = Object.keys(requestBody);
-
-        if (keys.length < Object.keys(this).length)
+        if (!this._hasAllFields(request))
         {
             return false;
         }
         else
         {
-            return this.updateFields(requestBody);
+            return this.updateFields(request);
         }
     }
 
     /**
      * Returns a boat object without metadata
      */
-    getBoat() {
+    async getBoat(nodeRequest) {
+        await this._retrieveLoads(nodeRequest);
         return {
             id: this.id,
             name: this.name,
@@ -129,6 +144,21 @@ module.exports = class Boat
             self: this.self
         }
     }
+
+    /**
+     * Returns a boat object without metadata or loads
+     */
+    getBoatWithoutLoads() {
+    return {
+        id: this.id,
+        name: this.name,
+        type: this.type,
+        length: this.length,
+        public: this.isPublic,
+        owner: this.owner,
+        self: this.self
+    }
+}
 
     async insert()
     {
@@ -147,6 +177,23 @@ module.exports = class Boat
 
         // Insert the new boat
         await datastore.insert(entity);
+    }
+
+    async update()
+    {
+        var entity = {
+            key: this.key,
+            data: {
+                name: this.name,
+                type: this.type,
+                length: this.length,
+                loads: this.loads,
+                isPublic: this.isPublic,
+                owner: this.owner
+            }
+        }
+        console.log(entity)
+        await datastore.update(entity)
     }
 
     async get(nodeRequest)

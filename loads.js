@@ -4,7 +4,9 @@
 var datastore = require('./database');
 var express = require('express')
 var router = express.Router();
+var h = require('./helper');
 var Load = require('./load_class');
+var Boat = require('./boat_class');
 
 
 /*
@@ -26,9 +28,9 @@ router.post('/', async (req, res) => {
     else {
 
         // Construct the key and data for the datastore query
-        var newLoad = new Load(req.body, req)
+        var newLoad = new Load(req)
 
-        // Insert the new load
+        // Insert the new load      
         await newLoad.insert();
 
         // Now get the load back so we can display it
@@ -80,14 +82,9 @@ router.get('/:load_id', async (req, res) => {
             // Parse the carrier if it isn't null
 
             if (loadResult.carrier !== null) {
-                let [carrierResult] = await datastore.get(loadResult.carrier);
-                carrierResult["id"] = carrierResult[datastore.KEY].id
-                carrierResult["self"] = req.protocol + "://" + req.get("host") + "/boats/" + carrierResult[datastore.KEY].id;
-                loadResult.carrier = {
-                    id: carrierResult.id,
-                    self: carrierResult.self,
-                    name: carrierResult.name
-                }
+                let carrierResult = await h.getBoatFromID(loadResult.carrier.id)
+                let carrier = new Boat(carrierResult, req);
+                loadResult.carrier = carrier.getBoatWithoutLoads();
             }
             res.status(200).json({
                 id: loadResult.id,
@@ -216,7 +213,51 @@ router.get('/', async (req, res) => {
 
 // TODO - PUT LOADS (CHANGE WHOLE LOAD)
 
+router.put('/:load_id', async (req, res) => {
+
+    // Create a Key for the Load object
+    let key = h.createLoadKey(req.params.load_id);
+
+    // Create a Load object
+    let load = new Load(req);
+    load.key = key;
+
+    // Create a new load object, update the load object with desired data, update in DB
+
+    if (load.updateAllFields(req)) 
+    {
+        await datastore.update({key: load.key, data: load});
+        await load.get(req);
+        res.setHeader('Location', load.self);
+        return res.status(303).json()
+    }
+    else
+    {   
+        let error = {Error: "PUTs at this endpoint require that all fields are updated. Use PATCH for partial updates."}
+        return res.status(400).json(error)
+    }
+})
 // TODO - PATCH LOADS (CHANGE PART OF A LOAD)
+
+router.patch('/:load_id', async (req, res) => {
+
+    let loadResult = await h.getLoadFromID(req.params.load_id)
+    let load = new Load(loadResult, req);
+
+    // Create a new load object, update the load object with desired data, update in DB
+
+    if (load.updateFields(req)) 
+    {
+        await load.update()
+        await load.get(req);
+        return res.status(200).json(load.getLoad())
+    }
+    else
+    {   
+        let error = {Error: "No properties of the boat were included in the body of the request."}
+        return res.status(400).json(error)
+    }
+})
 
 /*  
     EXPORTS

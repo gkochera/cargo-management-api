@@ -9,6 +9,7 @@
     IMPORTS
 */
 var Boat = require('./boat_class')
+var Load = require('./load_class');
 var datastore = require('./database');
 var express = require('express')
 var router = express.Router();
@@ -90,8 +91,7 @@ router.get('/:boat_id', async (req, res) => {
     else 
     {
         // Create a datastore key from the boat ID and try to retrieve the key
-        let boatKey = datastore.key(['Boat', datastore.int(boat_id)]);
-        let [boatResult] = await datastore.get(boatKey)
+        let boatResult = await h.getBoatFromID(boat_id);
 
 
         // If we get undefined back, the boat doesn't exist
@@ -104,37 +104,10 @@ router.get('/:boat_id', async (req, res) => {
         // Otherwise...
         else
         {
-
-            // Add the id and self attributes to the object and send it back to the user
-            boatResult["id"] = boatResult[datastore.KEY].id.toString()
-            let self = req.protocol + "://" + req.get("host") + req.baseUrl + "/" + boatResult[datastore.KEY].id;
-            boatResult["self"] = self;
-            
-            
-            // Get the actual load for each of the stored load keys
-            boatResult["loads"] = await Promise.all(boatResult.loads.map(async (load) => {
-                let [loadResult] = await datastore.get(load);
-                let self = req.protocol + "://" + req.get("host") +  "/loads/" + loadResult[datastore.KEY].id;
-                let thisLoad = {
-                    id: loadResult[datastore.KEY].id,
-                    self: self
-
-                }
-                return thisLoad
-            }));
-            
-            // Format the data correctly.
-            let newBoatResult = {
-                id: boatResult.id,
-                name: boatResult.name,
-                type: boatResult.type,
-                length: boatResult.length,
-                loads: boatResult.loads,
-                self: boatResult.self
-            }
+            let boat = new Boat(boatResult, req);
 
             // Send 200 back to user
-            res.status(200).json(newBoatResult);
+            res.status(200).json(await boat.getBoat(req));
         }
 
     }
@@ -305,9 +278,12 @@ router.put('/:boat_id/loads/:load_id', async (req, res) => {
             await datastore.update(loadEntity)
     
             // Send back a 204 confirming the update was made
-            res.status(204).json()
+            return res.status(204).json()
         }
     }
+
+    // If the user is not authenticated and does not have a valid JWT
+    return res.status(401).json({Error: "You must be authenticated to perform this action."})
 })
 
 // REMOVE A LOAD FROM A BOAT
@@ -327,21 +303,22 @@ router.delete('/:boat_id/loads/:load_id', async (req, res) => {
         let [boatResult] = await datastore.get(boatKey);
         let [loadResult] = await datastore.get(loadKey);
         
-        
+        console.log(loadResult.carrier)
+        console.log(boatKey)
         if (boatResult === undefined && loadResult === undefined) {
-            res.status(404).json({
+            return res.status(404).json({
                 Error: "The specified boat and load does not exist"
             })
         } else if (boatResult === undefined) {
-            res.status(404).json({
+            return res.status(404).json({
                 Error: "The specified boat does not exist"
             })
         } else if (loadResult === undefined) {
-            res.status(404).json({
+            return res.status(404).json({
                 Error: "The specified load does not exist"
             })
-        } else if (loadResult.carrier === null || !keysAreEqual(loadResult.carrier, boatKey)) {
-            res.status(403).json({
+        } else if (loadResult.carrier === null || !h.keysAreEqual(loadResult.carrier, boatKey)) {
+            return res.status(403).json({
                 Error: "The specified load is not on this boat."
             })
     
@@ -380,9 +357,12 @@ router.delete('/:boat_id/loads/:load_id', async (req, res) => {
             await datastore.update(loadEntity)
     
             // Send back a 204 confirming the update was made
-            res.status(204).json()
+            return res.status(204).json()
         }
     }
+
+    // If the user is not authenticated and does not have a valid JWT
+    return res.status(401).json({Error: "You must be authenticated to perform this action."})
 })
 
 /**
@@ -391,17 +371,17 @@ router.delete('/:boat_id/loads/:load_id', async (req, res) => {
  router.patch('/:boat_id', validate, async (req,res) => {
     
     // Validate the incoming body.
-    if (!helper.requestIsValid(req, res))
+    if (!h.requestIsValid(req, res))
     {
         return
     }
 
     // Get boat id from URL
     let boat_id = req.params.boat_id;
-
+    
     // Get the boat from DB, generate boat key
-    let boatResult = await helper.getBoatFromID(boat_id);
-    let boatKey = helper.createBoatKey(boat_id);
+    let boatResult = await h.getBoatFromID(boat_id);
+    let boat = new Boat(boatResult, req);
     
     // Return error if the boat doesn't exist
     if (boatResult === undefined)
@@ -411,7 +391,7 @@ router.delete('/:boat_id/loads/:load_id', async (req, res) => {
     }
 
     // See if another boat already has this name
-    if (await helper.existsBoatWithSameName(req.body.name, boat_id))
+    if (await h.existsBoatWithSameName(req.body.name, boat_id))
     {
         let error = {Error: "There is already a boat with this name."}
         res.status(403).json(error);
@@ -419,21 +399,18 @@ router.delete('/:boat_id/loads/:load_id', async (req, res) => {
     }
 
     // Create a new boat object, update the boat object with desired data, update in DB
-    let boat = new Boat(boatResult.name, boatResult.type, boatResult.length);
     let body;
     let status;
-    if (!boat.updateFields(req.body)) 
+    if (!boat.updateFields(req)) 
     {
         body = {Error: "No properties of the boat were included in the body of the request."}
         status = 400
     }
     else
     {
-        await datastore.update({key: boatKey, data: boat})
-        // Get the boat object from DB, add id and self, send back to user
-        boatResult = await helper.getBoatFromID(boat_id);
-        boatResult = helper.affixIDAndSelf(boatResult, req);
-        body = boatResult;
+        await boat.update();
+        await boat.get(req);
+        body = boat.getBoat();
         status = 200;
     }
     res.status(status).json(body);
@@ -454,7 +431,7 @@ router.patch('/', (req,res) => {
 router.put('/:boat_id', validate, async (req,res) => {
     
     // Validate the incoming body.
-    if (!helper.requestIsValid(req, res))
+    if (!h.requestIsValid(req, res))
     {
         return
     }
@@ -463,8 +440,8 @@ router.put('/:boat_id', validate, async (req,res) => {
     let boat_id = req.params.boat_id;
     
     // Get the boat from DB, generate boat key
-    let boatResult = await helper.getBoatFromID(boat_id);
-    let boatKey = helper.createBoatKey(boat_id);
+    let boatResult = await h.getBoatFromID(boat_id);
+    let boat = new Boat(boatResult, req);
     
     // Return error if the boat doesn't exist
     if (boatResult === undefined)
@@ -474,7 +451,7 @@ router.put('/:boat_id', validate, async (req,res) => {
     }
 
     // See if another boat already has this name
-    if (await helper.existsBoatWithSameName(req.body.name, boat_id))
+    if (await h.existsBoatWithSameName(req.body.name, boat_id))
     {
         let error = {Error: "There is already a boat with this name."}
         res.status(403).json(error);
@@ -482,13 +459,11 @@ router.put('/:boat_id', validate, async (req,res) => {
     }
 
     // Create a new boat object, update the boat object with desired data, update in DB
-    let boat = new Boat(boatResult.name, boatResult.type, boatResult.length)
-    if (boat.updateAllFields(req.body)) 
+    if (boat.updateAllFields(req)) 
     {
-        await datastore.update({key: boatKey, data: boat});
-        boatResult = await helper.getBoatFromID(boat_id);
-        boatResult = helper.affixIDAndSelf(boatResult, req);
-        res.setHeader('Location', boatResult.self);
+        await boat.update();
+        await boat.get(req);
+        res.setHeader('Location', boat.self);
         res.status(303).json()
     }
     else

@@ -24,39 +24,58 @@ var h = require('./helper');
 
 module.exports = class Load
 {
-    constructor(data, request=null, gDatastore=false)
+    constructor(data, request=null)
     {
-        if (gDatastore)
+
+        this.requiredAttributes = ['volume', 'content', 'creation_date']
+
+        if (data instanceof http.IncomingMessage)
         {
+            this.id = null;
+            this.carrier = null;
+            this.volume = data.body.volume;
+            this.content = data.body.content;
+            this.creation_date = data.body.creation_date;
+            this.key = datastore.key('Load');
+            this.self = null;
+            this.hasAllFields = this._hasAllFields(data);
+        }
+        else
+        {
+
             this.id = data[datastore.KEY].id.toString()
-            this.volume = data.volume;
             this.carrier = data.carrier;
+            this.volume = data.volume;
             this.content = data.content;
             this.creation_date = data.creation_date;
             this.key =  data[datastore.KEY];
             this.self = request.protocol + "://" + request.get("host") + "/loads/" + data[datastore.KEY].id;
-        }
-        else
-        {
-            this.id = null;
-            this.volume = data.volume;
-            this.carrier = null;
-            this.content = data.content;
-            this.creation_date = data.creation_date;
-            this.key = datastore.key('Load');
-            this.self = null;
+            this.hasAllFields = true;
         }
     }
 
 
     /**
-     * Returns a boat object without metadata
+     * Returns a load object without metadata
      */
     getLoad() {
         return {
             id: this.id,
             volume: this.volume,
             carrier: this.carrier,
+            content: this.content,
+            creation_date: this.creation_date,
+            self: this.self
+        }
+    }
+
+    /**
+     * Returns a load object without metadata or carrier
+     */
+    getLoadWithoutCarrier() {
+        return {
+            id: this.id,
+            volume: this.volume,
             content: this.content,
             creation_date: this.creation_date,
             self: this.self
@@ -80,6 +99,21 @@ module.exports = class Load
         await datastore.insert(entity);
     }
 
+    async update()
+    {
+        var entity = {
+            key: this.key,
+            data: {
+                volume: this.volume,
+                carrier: this.carrier,
+                content: this.content,
+                creation_date: this.creation_date,
+            }
+        }
+
+        await datastore.update(entity)
+    }
+
     async get(nodeRequest)
     {
         // Now get the boat back so we can display it
@@ -91,5 +125,60 @@ module.exports = class Load
         this.creation_date = loadResult.creation_date;
         this.key = loadResult[datastore.KEY];
         this.self = nodeRequest.protocol + "://" + nodeRequest.get("host") + "/loads/" + loadResult[datastore.KEY].id
+    }
+
+    /**
+     * Determines if the Boat has all fields filled out.
+     * 
+     * @returns true if all fields are present.
+     */
+    _hasAllFields(nodeRequest)
+    {
+        let nodeRequestBodyKeys = Object.keys(nodeRequest.body);
+        return this.requiredAttributes.every(key => nodeRequestBodyKeys.includes(key))
+    }
+
+        /**
+     * Updates the fields in a Boat object.
+     * @param {req.body} requestBody An express req.body object.
+     * @returns true if at least one field is present.
+     */
+    updateFields(request)
+    {
+        let keys = Object.keys(request.body);
+
+        if (keys.length < 1)
+        {
+            return false;
+        }
+
+        keys.map(key => {
+            if (this.hasOwnProperty(key))
+            {
+                this[key] = request.body[key];
+            }
+        })
+
+        // Ensure users can't try to circumvent integer constraint
+        this["length"] = parseInt(this["length"], 10);
+        
+        return true;
+    }
+    
+    /**
+     * Updates all fields in a boat object. If all fields are not included in the request body this function will fail.
+     * @param {req.body} requestBody 
+     * @returns true iff all fields are inlcuded in the request body.
+     */
+    updateAllFields(request)
+    {
+        if (!this._hasAllFields(request))
+        {
+            return false;
+        }
+        else
+        {
+            return this.updateFields(request);
+        }
     }
 }

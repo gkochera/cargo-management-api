@@ -115,6 +115,24 @@ function createBoatKey (id) {
     return datastore.key(['Boat', datastore.int(id)])
 }
 
+
+/**
+ * Gets a load from the database using the ID number. Returns undefined if the load doesn't exist.
+ */
+ async function getLoadFromID(loadID) {
+    // Get the load to see if there are any loads
+    let loadKey = datastore.key(['Load', datastore.int(loadID)]);
+    let [loadResult] = await datastore.get(loadKey);
+    return loadResult
+}
+
+/**
+ * Creates a datastore.KEY object for a Load with the given ID as int, id cannot be 0.
+ */
+function createLoadKey (id) {
+    return datastore.key(['Load', datastore.int(id)])
+}
+
 /**
  * Determines if there is a boat with the same name already in the database. Returns true if there is.
  */
@@ -270,5 +288,7 @@ module.exports = {
     requestIsValid,
     getGoogleInformation,
     validateJWT,
-    paginate
+    paginate,
+    createLoadKey,
+    getLoadFromID
 }
