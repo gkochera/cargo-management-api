@@ -214,6 +214,10 @@ router.get('/', async (req, res) => {
     res.status(200).json(newLoads);
 });
 
+// TODO - PUT LOADS (CHANGE WHOLE LOAD)
+
+// TODO - PATCH LOADS (CHANGE PART OF A LOAD)
+
 /*  
     EXPORTS
 */
