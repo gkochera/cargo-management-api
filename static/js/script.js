@@ -1,11 +1,11 @@
 function copyToClipboard() {
     var jwt = document.getElementById("jwt").innerText;
-    var aux = document.createElement("input");
-    aux.setAttribute("value", jwt);
-    document.body.appendChild(aux);
-    aux.select();
+    var hidden = document.createElement("input");
+    hidden.setAttribute("value", jwt);
+    document.body.appendChild(hidden);
+    hidden.select();
     document.execCommand("copy");
-    document.body.removeChild(aux);
+    document.body.removeChild(hidden);
 
     var message = document.getElementById("notice")
     message.style.display = 'block';
