@@ -8,16 +8,7 @@
         <div class='container'>
             <%- include('../partials/header'); %>
             <h2>You have registered! Welcome aboard!</h2>
-            <p> This is your JSON Web Token so you can navigate the members only
-                section of our cool ⛵ Boats/Loads/Users API.</p>
-                <table>
-                    <tr>
-                        <th>JSON Web Token</th>
-                    </tr>
-                    <tr>
-                        <td><%= data.id_token %></td>
-                    </tr>
-                </table>
+            <%- include('../partials/jwt'); %>
             <p>Your first name is <span class='name'><%= data.firstName %></span> and your last name is 
                 <span class='name'><%= data.lastName %></span>. Your states are the same too!</p>
             <p>Your unique Google Subscriber ID is <span class='name'><%= data.sub %></span>.</p>
@@ -25,5 +16,6 @@
                 <a href="/"><button>Go home!</button></a>
             </div>
         </div>
+        <%- include('../partials/javascript'); %>
     </body>
 </html>
