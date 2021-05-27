@@ -33,6 +33,14 @@ router.post('/', validate, async (req, res) => {
     // If the user is authenticated and has a valid JWT...
     if (req.authenticated)
     {
+        let user = await h.getUserFromID(req.sub);
+        if (user === undefined)
+        {
+            let error = {Error: "You must be a registered user in order to create a new boat."}
+            res.status(403).json(error);
+            return
+        }
+
         // Validate the incoming body.
         if (!h.requestIsValid(req, res))
         {
@@ -76,7 +84,16 @@ router.post('/', validate, async (req, res) => {
 
 // GET A SPECIFIC BOAT
 
-router.get('/:boat_id', async (req, res) => {
+router.get('/:boat_id', m.clientMustAcceptJSON, async (req, res) => {
+
+    // Test for garbage URL parameters
+    let screenedVariable = req.params.boat_id;
+    if (screenedVariable === undefined || isNaN(parseInt(screenedVariable)))
+    {
+        return res.status(400).json({
+            Error: "The boat_id you specified is not valid."
+        })
+    }
 
     // If the JWT is valid...
     if (req.authenticated)
@@ -132,7 +149,7 @@ router.get('/:boat_id', async (req, res) => {
 /**
  * GET ALL BOATS
  */
-router.get('/', async (req, res) => {
+router.get('/', m.clientMustAcceptJSON, async (req, res) => {
 
     // If the JWT is valid...
     if (req.authenticated)
@@ -174,8 +191,16 @@ router.get('/', async (req, res) => {
 /**
  * DELETE A BOAT
  */
-router.delete('/:boat_id', m.clientMustAcceptJSON, async (req, res) => {
+router.delete('/:boat_id', async (req, res) => {
     
+    // Test for garbage URL parameters
+    let screenedVariable = req.params.boat_id;
+    if (screenedVariable === undefined || isNaN(parseInt(screenedVariable)))
+    {
+        return res.status(400).json({
+            Error: "The boat_id you specified is not valid."
+        })
+    }
 
     if (req.authenticated)
     {
@@ -219,6 +244,24 @@ router.delete('/:boat_id', m.clientMustAcceptJSON, async (req, res) => {
 
 router.put('/:boat_id/loads/:load_id', async (req, res) => {
 
+    // Test for garbage URL parameters
+    let screenedVariable1 = req.params.boat_id;
+    if (screenedVariable1 === undefined || isNaN(parseInt(screenedVariable1)))
+    {
+        return res.status(400).json({
+            Error: "The boat_id you specified is not valid."
+        })
+    }
+
+    // Test for garbage URL parameters
+    let screenedVariable2 = req.params.load_id;
+    if (screenedVariable2 === undefined || isNaN(parseInt(screenedVariable2)))
+    {
+        return res.status(400).json({
+            Error: "The load_id you specified is not valid."
+        })
+    }
+
     if (req.authenticated)
     {
         let boat_id = req.params.boat_id;
@@ -258,6 +301,15 @@ router.put('/:boat_id/loads/:load_id', async (req, res) => {
     
         // If it is valid...
         } else {
+
+            // See if this boat is not owned by the logged in user
+            if (boatResult.owner !== req.sub)
+            {
+                res.status(403).json({
+                    Error: "You cannot add a load to someone else's boat."
+                })
+                return
+            }
             
             let boat = new Boat(boatResult, req);
             let load = new Load(loadResult, req);
@@ -285,6 +337,24 @@ router.put('/:boat_id/loads/:load_id', async (req, res) => {
 // REMOVE A LOAD FROM A BOAT
 
 router.delete('/:boat_id/loads/:load_id', async (req, res) => {
+
+    // Test for garbage URL parameters
+    let screenedVariable1 = req.params.boat_id;
+    if (screenedVariable1 === undefined || isNaN(parseInt(screenedVariable1)))
+    {
+        return res.status(400).json({
+            Error: "The boat_id you specified is not valid."
+        })
+    }
+
+    // Test for garbage URL parameters
+    let screenedVariable2 = req.params.load_id;
+    if (screenedVariable2 === undefined || isNaN(parseInt(screenedVariable2)))
+    {
+        return res.status(400).json({
+            Error: "The load_id you specified is not valid."
+        })
+    }
 
     if (req.authenticated)
     {
@@ -320,6 +390,15 @@ router.delete('/:boat_id/loads/:load_id', async (req, res) => {
     
         // If it is valid...
         } else {
+
+            // See if this boat is not owned by the logged in user
+            if (boatResult.owner !== req.sub)
+            {
+                res.status(403).json({
+                    Error: "You cannot remove a load from someone else's boat."
+                })
+                return
+            }
     
             // Add the load to the boatResult
             boatResult.loads = boatResult.loads.filter(element => element.id !== loadKey.id)
@@ -365,51 +444,75 @@ router.delete('/:boat_id/loads/:load_id', async (req, res) => {
  * UPDATE A BOAT (PARTIAL)
  */
  router.patch('/:boat_id', validate, async (req,res) => {
-    
-    // Validate the incoming body.
-    if (!h.requestIsValid(req, res))
+
+    // Test for garbage URL parameters
+    let screenedVariable = req.params.boat_id;
+    if (screenedVariable === undefined || isNaN(parseInt(screenedVariable)))
     {
-        return
+        return res.status(400).json({
+            Error: "The boat_id you specified is not valid."
+        })
     }
 
-    // Get boat id from URL
-    let boat_id = req.params.boat_id;
-    
-    // Get the boat from DB, generate boat key
-    let boatResult = await h.getBoatFromID(boat_id);
-    let boat = new Boat(boatResult, req);
-    
-    // Return error if the boat doesn't exist
-    if (boatResult === undefined)
-    {   
-        let error = {Error: "A boat with this boat_id was not found."};
-        res.status(404).json(error);
-    }
+    if (req.authenticated)
+    {
+        // Validate the incoming body.
+        if (!h.requestIsValid(req, res))
+        {
+            return
+        }
 
-    // See if another boat already has this name
-    if (await h.existsBoatWithSameName(req.body.name, boat_id))
-    {
-        let error = {Error: "There is already a boat with this name."}
-        res.status(403).json(error);
-        return
-    }
+        // Get boat id from URL
+        let boat_id = req.params.boat_id;
+        
+        // Get the boat from DB, generate boat key
+        let boatResult = await h.getBoatFromID(boat_id);
+        let boat = new Boat(boatResult, req);
+        
+        // Return error if the boat doesn't exist
+        if (boatResult === undefined)
+        {   
+            let error = {Error: "A boat with this boat_id was not found."};
+            res.status(404).json(error);
+        }
 
-    // Create a new boat object, update the boat object with desired data, update in DB
-    let body;
-    let status;
-    if (!boat.updateFields(req)) 
-    {
-        body = {Error: "No properties of the boat were included in the body of the request."}
-        status = 400
+        // See if another boat already has this name
+        if (await h.existsBoatWithSameName(req.body.name, boat_id))
+        {
+            let error = {Error: "There is already a boat with this name."}
+            res.status(403).json(error);
+            return
+        }
+
+        // See if this boat is not owned by the logged in user
+        if (boatResult.owner !== req.sub)
+        {
+            res.status(403).json({
+                Error: "This boat_id exists but you are not the owner."
+            })
+            return
+        }
+
+        // Create a new boat object, update the boat object with desired data, update in DB
+        let body;
+        let status;
+        if (!boat.updateFields(req)) 
+        {
+            body = {Error: "No properties of the boat were included in the body of the request."}
+            status = 400
+        }
+        else
+        {
+            await boat.update();
+            await boat.get(req);
+            body = boat.getBoat(req);
+            status = 200;
+        }
+        return res.status(status).json(body);
+
     }
-    else
-    {
-        await boat.update();
-        await boat.get(req);
-        body = boat.getBoat(req);
-        status = 200;
-    }
-    res.status(status).json(body);
+    // If the user is not authenticated and does not have a valid JWT
+    return res.status(401).json({Error: "You must be authenticated to perform this action."})
 })
 
 /**
@@ -426,48 +529,71 @@ router.patch('/', (req,res) => {
  * COMPLETELY UPDATE A BOAT
  */
 router.put('/:boat_id', validate, async (req,res) => {
-    
-    // Validate the incoming body.
-    if (!h.requestIsValid(req, res))
+
+    // Test for garbage URL parameters
+    let screenedVariable = req.params.boat_id;
+    if (screenedVariable === undefined || isNaN(parseInt(screenedVariable)))
     {
-        return
+        return res.status(400).json({
+            Error: "The boat_id you specified is not valid."
+        })
     }
 
-    // Get boat id from URL
-    let boat_id = req.params.boat_id;
-    
-    // Get the boat from DB, generate boat key
-    let boatResult = await h.getBoatFromID(boat_id);
-    let boat = new Boat(boatResult, req);
-    
-    // Return error if the boat doesn't exist
-    if (boatResult === undefined)
-    {   
-        let error = {Error: "A boat with this boat_id was not found."};
-        res.status(404).json(error);
-    }
-
-    // See if another boat already has this name
-    if (await h.existsBoatWithSameName(req.body.name, boat_id))
+    if (req.authenticated)
     {
-        let error = {Error: "There is already a boat with this name."}
-        res.status(403).json(error);
-        return
-    }
+        // Validate the incoming body.
+        if (!h.requestIsValid(req, res))
+        {
+            return
+        }
 
-    // Create a new boat object, update the boat object with desired data, update in DB
-    if (boat.updateAllFields(req)) 
-    {
-        await boat.update();
-        await boat.get(req);
-        res.setHeader('Location', boat.self);
-        res.status(303).json()
+        // Get boat id from URL
+        let boat_id = req.params.boat_id;
+        
+        // Get the boat from DB, generate boat key
+        let boatResult = await h.getBoatFromID(boat_id);
+        let boat = new Boat(boatResult, req);
+        
+        // Return error if the boat doesn't exist
+        if (boatResult === undefined)
+        {   
+            let error = {Error: "A boat with this boat_id was not found."};
+            res.status(404).json(error);
+        }
+
+        // See if another boat already has this name
+        if (await h.existsBoatWithSameName(req.body.name, boat_id))
+        {
+            let error = {Error: "There is already a boat with this name."}
+            res.status(403).json(error);
+            return
+        }
+
+        // See if this boat is not owned by the logged in user
+        if (boatResult.owner !== req.sub)
+        {
+            res.status(403).json({
+                Error: "This boat_id exists but you are not the owner."
+            })
+            return
+        }
+
+        // Create a new boat object, update the boat object with desired data, update in DB
+        if (boat.updateAllFields(req)) 
+        {
+            await boat.update();
+            await boat.get(req);
+            res.setHeader('Location', boat.self);
+            res.status(303).json()
+        }
+        else
+        {   
+            let error = {Error: "PUTs at this endpoint require that all fields are updated. Use PATCH for partial updates."}
+            res.status(400).json(error)
+        }
     }
-    else
-    {   
-        let error = {Error: "PUTs at this endpoint require that all fields are updated. Use PATCH for partial updates."}
-        res.status(400).json(error)
-    }
+    // If the user is not authenticated and does not have a valid JWT
+    return res.status(401).json({Error: "You must be authenticated to perform this action."})
 });
 
 /**

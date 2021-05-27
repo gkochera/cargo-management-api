@@ -5,6 +5,7 @@ var datastore = require('./database');
 var express = require('express')
 var router = express.Router();
 var h = require('./helper');
+var m = require('./middleware');
 var Load = require('./load_class');
 var Boat = require('./boat_class');
 
@@ -15,7 +16,7 @@ var Boat = require('./boat_class');
 
 // CREATE A LOAD 
 
-router.post('/', async (req, res) => {
+router.post('/', m.clientMustAcceptJSON, async (req, res) => {
 
     // Verify the incoming body has a volume, content and creation_date
     if (!req.body.volume || !req.body.content || !req.body.creation_date) {
@@ -45,7 +46,17 @@ router.post('/', async (req, res) => {
 
 // GET A LOAD
 
-router.get('/:load_id', async (req, res) => {
+router.get('/:load_id', m.clientMustAcceptJSON, async (req, res) => {
+
+    // Test for garbage URL parameters
+    let screenedVariable = req.params.load_id;
+    if (screenedVariable === undefined || isNaN(parseInt(screenedVariable)))
+    {
+        return res.status(400).json({
+            Error: "The load_id you specified is not valid."
+        })
+    }
+
     let load_id = req.params.load_id;
     
     // See if the query included a load ID
@@ -102,6 +113,16 @@ router.get('/:load_id', async (req, res) => {
 // DELETE A LOAD
 
 router.delete('/:load_id', async (req, res) => {
+
+    // Test for garbage URL parameters
+    let screenedVariable = req.params.load_id;
+    if (screenedVariable === undefined || isNaN(parseInt(screenedVariable)))
+    {
+        return res.status(400).json({
+            Error: "The load_id you specified is not valid."
+        })
+    }
+
     let load_id = req.params.load_id;
 
     // Get the load to see if it has a carrier
@@ -150,7 +171,7 @@ router.delete('/:load_id', async (req, res) => {
 
 // GET ALL LOADS
 
-router.get('/', async (req, res) => {
+router.get('/', m.clientMustAcceptJSON, async (req, res) => {
     
     let query = datastore.createQuery('Load')
 
@@ -181,6 +202,15 @@ router.get('/', async (req, res) => {
 
 router.put('/:load_id', async (req, res) => {
 
+    // Test for garbage URL parameters
+    let screenedVariable = req.params.load_id;
+    if (screenedVariable === undefined || isNaN(parseInt(screenedVariable)))
+    {
+        return res.status(400).json({
+            Error: "The load_id you specified is not valid."
+        })
+    }
+
     // Create a Key for the Load object
     let key = h.createLoadKey(req.params.load_id);
 
@@ -205,7 +235,16 @@ router.put('/:load_id', async (req, res) => {
 })
 // PATCH LOADS (CHANGE PART OF A LOAD)
 
-router.patch('/:load_id', async (req, res) => {
+router.patch('/:load_id', m.clientMustAcceptJSON, async (req, res) => {
+
+    // Test for garbage URL parameters
+    let screenedVariable = req.params.load_id;
+    if (screenedVariable === undefined || isNaN(parseInt(screenedVariable)))
+    {
+        return res.status(400).json({
+            Error: "The load_id you specified is not valid."
+        })
+    }
 
     let loadResult = await h.getLoadFromID(req.params.load_id)
     let load = new Load(loadResult, req);

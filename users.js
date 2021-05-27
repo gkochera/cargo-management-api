@@ -100,7 +100,7 @@ router.get('/signup', m.authenticate, m.getToken, async (req, res) => {
  * ! UNPROTECTED ROUTE !
  */
 
-router.get('/', async (req, res) =>{
+router.get('/', m.clientMustAcceptJSON, async (req, res) =>{
     let query = datastore.createQuery('User')
     let [result] = await datastore.runQuery(query);
     let users = result.map(user => {
@@ -111,7 +111,16 @@ router.get('/', async (req, res) =>{
     res.status(200).json(users)
 })
 
-router.get('/:user_id', async (req, res) => {
+router.get('/:user_id', m.clientMustAcceptJSON, async (req, res) => {
+
+    // Test for garbage URL parameters
+    let screenedVariable = req.params.user_id;
+    if (screenedVariable === undefined || isNaN(parseInt(screenedVariable)))
+    {
+        return res.status(400).json({
+            Error: "The user_id you specified is not valid."
+        })
+    }
     
     let result = await h.getUserFromID(req.params.user_id);
     console.log(result)
