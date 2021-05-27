@@ -106,7 +106,17 @@ router.get('/', async (req, res) =>{
     let users = result.map(user => {
         return new User(user, req, true).getUser();
     })
+    let totalUsers = await h.getNumberOfUsers();
+    users.push({totalUsers})
     res.status(200).json(users)
+})
+
+router.get('/:user_id', async (req, res) => {
+    
+    let result = await h.getUserFromID(req.params.user_id);
+    console.log(result)
+    let user = new User(result, req, true)
+    res.status(200).json(user.getUser());
 })
 
 /**

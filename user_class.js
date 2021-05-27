@@ -30,8 +30,9 @@ module.exports = class User
                 this.sub = data.sub;
                 this.first_name = data.first_name;
                 this.last_name = data.last_name;
+                this.account_created = data.account_created;
                 this.key = data[datastore.KEY];
-                this.self = request.protocol + "://" + request.get("host") + "/users/" + data[datastore.KEY].id;
+                this.self = request.protocol + "://" + request.get("host") + "/users/" + this.sub;
             }
             else
             {
@@ -39,6 +40,7 @@ module.exports = class User
                 this.sub = data.sub;
                 this.first_name = data.firstName;
                 this.last_name = data.lastName;
+                this.account_created = this._dateNow();
                 this.key = datastore.key('User');
                 this.self = null;
             }
@@ -52,7 +54,8 @@ module.exports = class User
                 data: {
                     sub: this.sub,
                     first_name: this.first_name,
-                    last_name: this.last_name
+                    last_name: this.last_name,
+                    account_created: this.account_created
                 }
             }
     
@@ -69,7 +72,18 @@ module.exports = class User
                 sub: this.sub,
                 first_name: this.first_name,
                 last_name: this.last_name,
+                account_created: this.account_created,
                 self: this.self
             }
+        }
+
+        _dateNow() {
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            var yyyy = today.getFullYear();
+
+            today = mm + '/' + dd + '/' + yyyy;
+            return today;
         }
     }

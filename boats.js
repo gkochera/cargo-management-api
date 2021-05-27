@@ -65,7 +65,7 @@ router.post('/', validate, async (req, res) => {
         await newBoat.get(req);
 
         // Send the new boat back to the user
-        res.status(201).json(newBoat.getBoat())
+        res.status(201).json(await newBoat.getBoat(req))
         return
     }
 
@@ -77,40 +77,56 @@ router.post('/', validate, async (req, res) => {
 // GET A SPECIFIC BOAT
 
 router.get('/:boat_id', async (req, res) => {
-    let boat_id = req.params.boat_id;
 
-    // See if the query included a boat ID
-    if (!boat_id) 
+    // If the JWT is valid...
+    if (req.authenticated)
     {
-        res.status(404).json({
-            Error: "No boat with this boat_id exists"
-        })
-    }
+        let boat_id = req.params.boat_id;
 
-    // If it did...
-    else 
-    {
-        // Create a datastore key from the boat ID and try to retrieve the key
-        let boatResult = await h.getBoatFromID(boat_id);
-
-
-        // If we get undefined back, the boat doesn't exist
-        if (boatResult === undefined) {
-            res.status(404).json({
+        // See if the query included a boat ID
+        if (!boat_id) 
+        {
+            return res.status(404).json({
                 Error: "No boat with this boat_id exists"
             })
         }
 
-        // Otherwise...
-        else
+        // If it did...
+        else 
         {
-            let boat = new Boat(boatResult, req);
+            // Create a datastore key from the boat ID and try to retrieve the key
+            let boatResult = await h.getBoatFromID(boat_id);
+            console.log(boatResult);
+            // If we get undefined back, the boat doesn't exist
+            if (boatResult === undefined) {
+                return res.status(404).json({
+                    Error: "No boat with this boat_id exists"
+                })
+            }
 
-            // Send 200 back to user
-            res.status(200).json(await boat.getBoat(req));
+            // Otherwise...
+            else
+            {
+                let boat = new Boat(boatResult, req);
+
+                if (req.sub === boat.owner)
+                {
+                    // Send 200 back to user
+                    return res.status(200).json(await boat.getBoat(req));
+                }
+                else
+                {
+                    // Send 403 back to user
+                    return res.status(403).json({
+                        Error: "Boats are protected entities that are only viewable by the owner. Verify you are using the correct JWT."
+                    })
+                }
+
+            }
         }
-
     }
+    // If the user is not authenticated and does not have a valid JWT
+    return res.status(401).json({Error: "You must be authenticated to perform this action."})
 });
 
 /**
@@ -130,31 +146,28 @@ router.get('/', async (req, res) => {
             if (!boat.hasOwnProperty('next'))
             {
                 let newBoat = new Boat(boat, req);
-                return newBoat.getBoat();
+                return newBoat.getBoat(req);
             }
             return boat;
     
         })
-        res.status(200).json(boats)
-        return;
+        boats = await Promise.all(boats).then((retrievedBoats) => {
+            return retrievedBoats;
+        })
+
+        let totalBoats = await h.getNumberBoats();
+        let totalUserBoats = await h.getNumberOfUserBoats(req.sub);
+
+        boats.push({
+            totalUserBoats,
+            totalBoats
+        })
+
+        return res.status(200).json(boats);
     }
 
-    // If the JWT is not valid or missing..
-    let query = datastore.createQuery('Boat')
-        .filter('isPublic', '=', true);
-
-    let [result] = await h.paginate(req, query);
-    let boats = result.map(boat => {
-        if (!boat.hasOwnProperty('next'))
-        {
-            let newBoat = new Boat(boat, req);
-            return newBoat.getBoat();
-        }
-        return boat;
-
-    })
-    res.status(200).json(boats)
-    return
+    // If the user is not authenticated and does not have a valid JWT
+    return res.status(401).json({Error: "You must be authenticated to perform this action."})
 })
 
 
@@ -245,37 +258,20 @@ router.put('/:boat_id/loads/:load_id', async (req, res) => {
     
         // If it is valid...
         } else {
-    
+            
+            let boat = new Boat(boatResult, req);
+            let load = new Load(loadResult, req);
+
             // Add the load to the boatResult
-            boatResult.loads.push(loadKey)
+            boat.loads.push(loadKey)
     
             // Create a boat object and save the updated version to the database
-            let boat = {
-                name: boatResult.name,
-                type: boatResult.type,
-                length: boatResult.length,
-                loads: boatResult.loads
-            }
-    
-            let boatEntity = {
-                key: boatKey,
-                data: boat
-            }
-            await datastore.update(boatEntity);
+            await boat.update();
     
             // Create the load object and save it to the database
-    
-            let load = {
-                volume: loadResult.volume,
-                carrier: boatKey,
-                content: loadResult.content,
-                creation_date: loadResult.creation_date
-            }
-            let loadEntity = {
-                key: loadKey,
-                data: load
-            }
-            await datastore.update(loadEntity)
+            load.carrier = boatKey;
+
+            await load.update();
     
             // Send back a 204 confirming the update was made
             return res.status(204).json()
@@ -410,7 +406,7 @@ router.delete('/:boat_id/loads/:load_id', async (req, res) => {
     {
         await boat.update();
         await boat.get(req);
-        body = boat.getBoat();
+        body = boat.getBoat(req);
         status = 200;
     }
     res.status(status).json(body);
@@ -422,6 +418,7 @@ router.delete('/:boat_id/loads/:load_id', async (req, res) => {
 router.patch('/', (req,res) => {
     let code = 405
     let error = {Error: "You cannot update all boats."}
+    res.setHeader('Allow', 'GET, POST')
     res.status(code).json(error)
 })
 
@@ -479,6 +476,7 @@ router.put('/:boat_id', validate, async (req,res) => {
 router.put('/', (req,res) => {
     let code = 405
     let error = {Error: "You cannot update all boats."}
+    res.setHeader('Allow', 'GET, POST')
     res.status(code).json(error)
 })
 

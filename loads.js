@@ -151,67 +151,33 @@ router.delete('/:load_id', async (req, res) => {
 // GET ALL LOADS
 
 router.get('/', async (req, res) => {
-    let pageNumber = req.query.page
     
-    // Create and run a query to get all the boats
-    let loadQuery = pageNumberHandler(pageNumber, 'Load')
-    const loadResults = await datastore.runQuery(loadQuery);
-    
-    // Hacky workaround to see if there are results on the next page
-    // Google Cloud has a weird bug where 'moreResults' is always === MORE_RESULTS_AFTER_LIMIT
-    // Bug Link: https://github.com/googleapis/google-cloud-datastore/issues/130
-    let nextloadQuery = pageNumberHandler(parseInt(pageNumber) + 1, 'Boat')
-    const nextLoadResults = await datastore.runQuery(nextloadQuery);
+    let query = datastore.createQuery('Load')
 
-    // Add the next property if required (based on the next page actually having results)
-    if (nextLoadResults[0].length) {
-        if (pageNumber === undefined) {
-            loadResults[0].push({
-                "next": req.protocol + "://" + req.get("host") + req.baseUrl + "?page=2"
-            })
-        } else {
-            loadResults[0].push({
-                "next": req.protocol + "://" + req.get("host") + req.baseUrl + "?page=" + (parseInt(pageNumber) + 1)
-            })
+    let [result] = await h.paginate(req, query)
+
+    let loads = result.map(load => {
+        if (!load.hasOwnProperty('next'))
+        {
+            let newLoad = new Load(load, req);
+            return newLoad.getLoad(req);
         }
+        return load;
 
-    }
+    })
 
-    // Add the 'id' and 'self' property to each of the boat objects.
-    const [loads] = loadResults;
-    
-    let newLoads = await Promise.all(loads.map(async entity => {
-        if (!(entity.hasOwnProperty("next"))) {
-            let id = entity[datastore.KEY].id
-            let self = req.protocol + "://" + req.get("host") + req.baseUrl + "/" + entity[datastore.KEY].id;
-            let carrier = null;
-            if (entity.carrier !== null) {
-                let [boatResult] = await datastore.get(entity.carrier);
-                carrier = {
-                    id: boatResult[datastore.KEY].id,
-                    name: boatResult.name,
-                    self: req.protocol + "://" + req.get("host") + "/boats/" + boatResult[datastore.KEY].id
-                }
-            }
-            return {
-                id,
-                volume: entity.volume,
-                carrier,
-                content: entity.content,
-                creation_date: entity.creation_date,
-                self
-            }
-        } else {
-            return entity
-        }
+    loads = await Promise.all(loads).then((retrievedLoads) => {
+        return retrievedLoads;
+    })
 
-    }))
+    // Add the number of loads
+    totalLoads = await h.getNumberOfLoads();
+    loads.push({totalLoads})
 
-    // Return the result
-    res.status(200).json(newLoads);
+    return res.status(200).json(loads);
 });
 
-// TODO - PUT LOADS (CHANGE WHOLE LOAD)
+// PUT LOADS (CHANGE WHOLE LOAD)
 
 router.put('/:load_id', async (req, res) => {
 
@@ -237,7 +203,7 @@ router.put('/:load_id', async (req, res) => {
         return res.status(400).json(error)
     }
 })
-// TODO - PATCH LOADS (CHANGE PART OF A LOAD)
+// PATCH LOADS (CHANGE PART OF A LOAD)
 
 router.patch('/:load_id', async (req, res) => {
 

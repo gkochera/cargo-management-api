@@ -15,7 +15,6 @@ let got = require('got');                       // Modern request library for cr
 var jwt = require('jsonwebtoken');              // Used to verify the JWT
 var jwksClient = require('jwks-rsa');
 
-
 /*
     HELPER FUNCTIONS
 */
@@ -70,8 +69,10 @@ function pageNumberHandler(pageNumber, query){
  */
 
 async function paginate(nodeRequest, query){
-    let pageNumber = nodeRequest.query.page;
-    
+
+    let pageNumber = (nodeRequest.query.page === undefined) ? 1 : nodeRequest.query.page;
+    let oldQuery = query;
+
     // Create and run a query to get all the boats
     let newQuery = pageNumberHandler(pageNumber, query)
     const results = await datastore.runQuery(newQuery);
@@ -82,7 +83,7 @@ async function paginate(nodeRequest, query){
     let nextQuery = pageNumberHandler(parseInt(pageNumber) + 1, query)
     const nextResults = await datastore.runQuery(nextQuery);
 
-    // Add the next property if required (based on the next page actually having results)
+    // Get the total number of records
     if (nextResults[0].length) {
         if (pageNumber === undefined) {
             results[0].push({
@@ -93,9 +94,38 @@ async function paginate(nodeRequest, query){
                 "next": nodeRequest.protocol + "://" + nodeRequest.get("host") + nodeRequest.baseUrl + "?page=" + (parseInt(pageNumber) + 1)
             })
         }
-
     }
     return results;
+}
+
+async function getNumberOfLoads()
+{
+    let query = datastore.createQuery('Load');
+    let [total] = await datastore.runQuery(query);
+    return total.length;
+}
+
+async function getNumberOfUsers()
+{
+    let query = datastore.createQuery('User');
+    let [total] = await datastore.runQuery(query);
+    return total.length;
+}
+
+async function getNumberOfUserBoats(sub)
+{
+    let query = datastore.createQuery('Boat').filter(
+        "owner", "=", sub
+    );
+    let [total] = await datastore.runQuery(query);
+    return total.length;
+}
+
+async function getNumberBoats()
+{
+    let query = datastore.createQuery('Boat');
+    let [total] = await datastore.runQuery(query);
+    return total.length;
 }
 
 /**
@@ -131,6 +161,24 @@ function createBoatKey (id) {
  */
 function createLoadKey (id) {
     return datastore.key(['Load', datastore.int(id)])
+}
+
+
+/**
+ * Gets a user from the database using the ID number. Returns undefined if the user doesn't exist.
+ */
+ async function getUserFromID(userID) {
+    // Get the user to see if there are any users
+    let query = datastore.createQuery('User').filter('sub','=',userID);
+    let [[userResult]] = await datastore.runQuery(query);
+    return userResult
+}
+
+/**
+ * Creates a datastore.KEY object for a User with the given ID as int, id cannot be 0.
+ */
+function createUserKey (id) {
+    return datastore.key(['User', datastore.int(id)])
 }
 
 /**
@@ -290,5 +338,11 @@ module.exports = {
     validateJWT,
     paginate,
     createLoadKey,
-    getLoadFromID
+    getLoadFromID,
+    getNumberOfLoads,
+    getNumberBoats,
+    getNumberOfUserBoats,
+    getNumberOfUsers,
+    getUserFromID,
+    createUserKey
 }

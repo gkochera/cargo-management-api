@@ -174,7 +174,6 @@ module.exports = class Boat
                 owner: this.owner
             }
         }
-
         // Insert the new boat
         await datastore.insert(entity);
     }
@@ -192,7 +191,7 @@ module.exports = class Boat
                 owner: this.owner
             }
         }
-        console.log(entity)
+
         await datastore.update(entity)
     }
 
