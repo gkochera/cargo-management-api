@@ -13,15 +13,15 @@ const datastore = require('./database');
  */
  var clientMustAcceptJSON = (req, res, next) => {
 
-    if (req.accepts('json'))
-    {
-        next()
-    }
-    else
+    if (req.get('Accept') === undefined || !req.accepts('json'))
     {
         let code = 406;
         let error = {Error: "This endpoint only supports a Content-Type of application/json, please check your HTTP Accept headers."};
-        res.status(code).json(error);
+        return res.status(code).json(error);
+    }
+    else
+    {
+        next()
     }
 }
 
