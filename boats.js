@@ -470,31 +470,32 @@ router.delete('/:boat_id/loads/:load_id', async (req, res) => {
         
         // Get the boat from DB, generate boat key
         let boatResult = await h.getBoatFromID(boat_id);
-        let boat = new Boat(boatResult, req);
+
         
         // Return error if the boat doesn't exist
         if (boatResult === undefined)
         {   
             let error = {Error: "A boat with this boat_id was not found."};
-            res.status(404).json(error);
+            return res.status(404).json(error);
         }
 
         // See if another boat already has this name
         if (await h.existsBoatWithSameName(req.body.name, boat_id))
         {
             let error = {Error: "There is already a boat with this name."}
-            res.status(403).json(error);
-            return
+            return res.status(403).json(error);
         }
 
         // See if this boat is not owned by the logged in user
         if (boatResult.owner !== req.sub)
         {
-            res.status(403).json({
+            return res.status(403).json({
                 Error: "This boat_id exists but you are not the owner."
             })
-            return
+
         }
+
+        let boat = new Boat(boatResult, req);
 
         // Create a new boat object, update the boat object with desired data, update in DB
         let body;
