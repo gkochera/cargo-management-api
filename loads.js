@@ -6,8 +6,7 @@ var express = require('express')
 var router = express.Router();
 var h = require('./helper');
 var m = require('./middleware');
-var Load = require('./load_class');
-var Boat = require('./boat_class');
+var { Boat, Load } = require('./classes');
 
 
 /*
@@ -38,7 +37,7 @@ router.post('/', m.clientMustAcceptJSON, async (req, res) => {
         await newLoad.get(req);
 
         // Send the new load back to the user
-        res.status(201).json(newLoad.getLoad());
+        res.status(201).json(newLoad.getLoad(req));
     }
 })
 
@@ -178,7 +177,7 @@ router.get('/', m.clientMustAcceptJSON, async (req, res) => {
 
     let [result] = await h.paginate(req, query)
 
-    let loads = result.map(load => {
+    let loads = result.map(async load => {
         if (!load.hasOwnProperty('next'))
         {
             let newLoad = new Load(load, req);
@@ -256,7 +255,7 @@ router.patch('/:load_id', m.clientMustAcceptJSON, async (req, res) => {
     {
         await load.update()
         await load.get(req);
-        return res.status(200).json(load.getLoad())
+        return res.status(200).json(load.getLoad(req))
     }
     else
     {   

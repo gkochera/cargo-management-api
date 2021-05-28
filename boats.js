@@ -8,8 +8,7 @@
 /*
     IMPORTS
 */
-var Boat = require('./boat_class');
-var Load = require('./load_class');
+var { Boat, Load } = require('./classes');
 var datastore = require('./database');
 var express = require('express')
 var router = express.Router();
