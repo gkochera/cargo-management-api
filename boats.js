@@ -410,6 +410,7 @@ router.delete('/:boat_id/loads/:load_id', async (req, res) => {
                 name: boatResult.name,
                 type: boatResult.type,
                 length: boatResult.length,
+                owner: boatResult.owner,
                 loads: boatResult.loads
             }
     

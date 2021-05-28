@@ -37,7 +37,7 @@ router.post('/', m.clientMustAcceptJSON, async (req, res) => {
         await newLoad.get(req);
 
         // Send the new load back to the user
-        res.status(201).json(newLoad.getLoad(req));
+        res.status(201).json(await newLoad.getLoad(req));
     }
 })
 
