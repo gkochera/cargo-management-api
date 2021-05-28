@@ -208,4 +208,36 @@ module.exports = class Boat
         this.owner = boatResult.owner;
         this.self = nodeRequest.protocol + "://" + nodeRequest.get("host") + "/boats/" + boatResult[datastore.KEY].id
     }
+
+    async removeAllLoads()
+    {
+
+        // Update the loads to not have a carrier
+        await this.loads.forEach(async load => {
+            var [current] = await datastore.get(load);
+
+            var newLoad = {
+                volume: current.volume,
+                carrier: null,
+                content: current.content,
+                creation_date: current.creation_date       
+            }
+            let entity = {
+                key: load,
+                data: newLoad
+            }
+
+            await datastore.update(entity);
+        })
+    }
+
+    async removeLoad(loadKey)
+    {
+        // Get all the loads from datastore
+        this.loads = this.loads.filter(load => load !== loadKey)
+
+        await this.update();
+
+
+    }
 }

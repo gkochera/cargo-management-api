@@ -8,7 +8,7 @@
 /*
     IMPORTS
 */
-var Boat = require('./boat_class')
+var Boat = require('./boat_class');
 var Load = require('./load_class');
 var datastore = require('./database');
 var express = require('express')
@@ -229,6 +229,10 @@ router.delete('/:boat_id', async (req, res) => {
             return
         }
 
+        // Remove all loads from the boat
+        let boat = new Boat(boatResult, req)
+        boat.removeAllLoads();
+
         // Delete the boat
         await datastore.delete(boatKey);
         res.status(204).json();
@@ -276,25 +280,25 @@ router.put('/:boat_id/loads/:load_id', async (req, res) => {
         let [loadResult] = await datastore.get(loadKey);
     
         if (boatResult === undefined && loadResult === undefined) {
-            res.status(404).json({
+            return res.status(404).json({
                 Error: "The specified boat and load does not exist"
             })
         } else if (boatResult === undefined) {
-            res.status(404).json({
+            return res.status(404).json({
                 Error: "The specified boat does not exist"
             })
         } else if (loadResult === undefined) {
-            res.status(404).json({
+            return res.status(404).json({
                 Error: "The specified load does not exist"
             })
         } else if (loadResult.carrier !== null) {
     
             if (loadResult.carrier.id === boatKey.id) {
-                res.status(403).json({
+                return res.status(403).json({
                     Error: "The specified load has already been assigned to this boat."
                 })
             } else {
-                res.status(403).json({
+                return res.status(403).json({
                     Error: "The specified load has already been assigned to another boat."
                 })
             }
@@ -305,10 +309,9 @@ router.put('/:boat_id/loads/:load_id', async (req, res) => {
             // See if this boat is not owned by the logged in user
             if (boatResult.owner !== req.sub)
             {
-                res.status(403).json({
+                return res.status(403).json({
                     Error: "You cannot add a load to someone else's boat."
                 })
-                return
             }
             
             let boat = new Boat(boatResult, req);
@@ -522,7 +525,7 @@ router.patch('/', (req,res) => {
     let code = 405
     let error = {Error: "You cannot update all boats."}
     res.setHeader('Allow', 'GET, POST')
-    res.status(code).json(error)
+    return res.status(code).json(error)
 })
 
 /**
@@ -584,12 +587,12 @@ router.put('/:boat_id', validate, async (req,res) => {
             await boat.update();
             await boat.get(req);
             res.setHeader('Location', boat.self);
-            res.status(303).json()
+            return res.status(303).json()
         }
         else
         {   
             let error = {Error: "PUTs at this endpoint require that all fields are updated. Use PATCH for partial updates."}
-            res.status(400).json(error)
+            return res.status(400).json(error)
         }
     }
     // If the user is not authenticated and does not have a valid JWT

@@ -181,4 +181,20 @@ module.exports = class Load
             return this.updateFields(request);
         }
     }
+
+    async unloadFromBoat()
+    {
+        // Update the carrier (boat) to not have this load
+        let newBoat = {
+            name: boatResult.name,
+            type: boatResult.type,
+            length: boatResult.length,
+            loads: boatResult.loads.filter(load => load.id !== this.id)
+        }
+        let entity = {
+            key: this.carrier,
+            data: newBoat
+        }
+        await datastore.update(entity);
+    }
 }

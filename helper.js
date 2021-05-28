@@ -240,6 +240,8 @@ function integerIsValid (integer) {
     return true
 }
 
+
+
 /**
  * Examines the incoming request body to ensure submitted data is valid. Returns false if any of the three
  * allowed attributes are not valid.

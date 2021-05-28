@@ -154,7 +154,8 @@ router.delete('/:load_id', async (req, res) => {
                 name: boatResult.name,
                 type: boatResult.type,
                 length: boatResult.length,
-                loads: boatResult.loads.filter(load => load.id !== loadKey.id)
+                loads: boatResult.loads.filter(load => load.id !== loadKey.id),
+                owner: boatResult.owner,
             }
             let entity = {
                 key: loadResult.carrier,
