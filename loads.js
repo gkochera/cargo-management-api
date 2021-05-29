@@ -255,7 +255,7 @@ router.patch('/:load_id', m.clientMustAcceptJSON, async (req, res) => {
     {
         await load.update()
         await load.get(req);
-        return res.status(200).json(load.getLoad(req))
+        return res.status(200).json(await load.getLoad(req))
     }
     else
     {   
