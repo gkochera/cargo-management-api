@@ -34,7 +34,7 @@ const datastore = require('./database');
  */
 var bodyMustNotContainExtraAttributes = (req, res, next) => {
 
-    const validKeys = ['name', 'type', 'length', 'public']
+    const validKeys = ['name', 'type', 'length']
     const bodyKeys = Object.keys(req.body);
     let badKey = false;
     bodyKeys.map(key => {
@@ -240,7 +240,12 @@ async function getToken (req, res, next) {
         
         // We call validateJWT to check the token against the Google Public Key, since its
         // asynchronous, we must wait for it. Req.authenticated will either be true or false.
-        let tokenValidation = await h.validateJWT(token)
+        let tokenValidation = await h.validateJWT(token).catch(e => {
+            console.log(e);
+            return res.status(400).json({
+                Error: "The JWT you submitted was invalid."
+            })
+        })
         req.authenticated = tokenValidation.result
         req.sub = tokenValidation.sub
 

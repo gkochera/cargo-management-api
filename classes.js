@@ -218,7 +218,6 @@ class Load
       "name": "Sea Witch",                      # The name of the boat, a string
       "type": "Catamaran",                      # The type of the boat, power boat, sailboat, catamaran etc. a string
       "length": 28,                             # The length of the boat
-      "public": true,                           # Boolean. true means the boat is public, false means it's private.
       "owner": "auth0|5eb70257",                # The owner of the boat, value of sub property in the JWT
       "self":"https://appspot.com/boats/abc123" # Optional
     }
@@ -234,12 +233,11 @@ class Boat
             this.name = data.body.name;
             this.type = data.body.type;
             this.length = parseInt(data.body.length, 10);
-            this.isPublic = data.body.public;
             this.owner = data.sub;
             this.self = null;
             this.loads = [],
             this.key = datastore.key('Boat');
-            this.requiredAttributes = ['name', 'type', 'length', 'public']
+            this.requiredAttributes = ['name', 'type', 'length']
             this.hasAllFields = this._hasAllFields(data);
         }
         else 
@@ -248,12 +246,11 @@ class Boat
             this.name = data.name;
             this.type = data.type;
             this.length = parseInt(data.length, 10);
-            this.isPublic = data.isPublic;
             this.owner = data.owner;
             this.self = request.protocol + "://" + request.get("host") + "/boats/" + data[datastore.KEY].id;
             this.loads = data.loads;
             this.key = h.createBoatKey(this.id)
-            this.requiredAttributes = ['name', 'type', 'length', 'public']
+            this.requiredAttributes = ['name', 'type', 'length']
             this.hasAllFields = true;
             
         }
@@ -340,7 +337,6 @@ class Boat
             type: this.type,
             length: this.length,
             loads: this.loads,
-            public: this.isPublic,
             owner: this.owner,
             self: this.self
         }
@@ -355,7 +351,6 @@ class Boat
         name: this.name,
         type: this.type,
         length: this.length,
-        public: this.isPublic,
         owner: this.owner,
         self: this.self
     }
@@ -371,7 +366,6 @@ class Boat
                 type: this.type,
                 length: this.length,
                 loads: this.loads,
-                isPublic: this.isPublic,
                 owner: this.owner
             }
         }
@@ -388,7 +382,6 @@ class Boat
                 type: this.type,
                 length: this.length,
                 loads: this.loads,
-                isPublic: this.isPublic,
                 owner: this.owner
             }
         }
@@ -405,7 +398,6 @@ class Boat
         this.type = boatResult.type;
         this.length = boatResult.length;
         this.loads = boatResult.loads;
-        this.isPublic = boatResult.isPublic;
         this.owner = boatResult.owner;
         this.self = nodeRequest.protocol + "://" + nodeRequest.get("host") + "/boats/" + boatResult[datastore.KEY].id
     }
