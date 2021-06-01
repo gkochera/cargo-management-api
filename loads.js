@@ -147,8 +147,15 @@ router.delete('/:load_id', async (req, res) => {
 
             // If it does have a carrier...
 
-            // Update the carrier (boat) to not have this load
             let [boatResult] = await datastore.get(loadResult.carrier);
+
+            // Make sure the owner is doing the change
+            if (!req.authenticated || boatResult.owner !== req.sub) {
+                return res.status(403).json({
+                    Error: "Only the boat owner can manipulate loads that are embarked on their boat."
+                })
+            }
+
             let newBoat = {
                 name: boatResult.name,
                 type: boatResult.type,
@@ -160,6 +167,8 @@ router.delete('/:load_id', async (req, res) => {
                 key: loadResult.carrier,
                 data: newBoat
             }
+
+            // Update the carrier (boat) to not have this load
             await datastore.update(entity);
 
             // Delete the load
@@ -218,6 +227,19 @@ router.put('/:load_id', async (req, res) => {
     let load = new Load(req);
     load.key = key;
 
+    // Retrieve the Load object
+    await load.get(req);
+    
+    // If the load is on a boat
+    if (load.carrier !== null) {
+        // Make sure the owner is doing the change
+        if (!req.authenticated || boatResult.owner !== req.sub) {
+            return res.status(403).json({
+                Error: "Only the boat owner can manipulate loads that are embarked on their boat."
+            })
+        }
+    }
+
     // Create a new load object, update the load object with desired data, update in DB
 
     if (load.updateAllFields(req)) 
@@ -248,6 +270,16 @@ router.patch('/:load_id', m.clientMustAcceptJSON, async (req, res) => {
 
     let loadResult = await h.getLoadFromID(req.params.load_id)
     let load = new Load(loadResult, req);
+
+    // If the load is on a boat
+    if (load.carrier !== null) {
+        // Make sure the owner is doing the change
+        if (!req.authenticated || boatResult.owner !== req.sub) {
+            return res.status(403).json({
+                Error: "Only the boat owner can manipulate loads that are embarked on their boat."
+            })
+        }
+    }
 
     // Create a new load object, update the load object with desired data, update in DB
 
