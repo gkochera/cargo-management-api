@@ -150,7 +150,15 @@ router.delete('/:load_id', async (req, res) => {
             let [boatResult] = await datastore.get(loadResult.carrier);
 
             // Make sure the owner is doing the change
-            if (!req.authenticated || boatResult.owner !== req.sub) {
+
+            if (!req.authenticated)
+            {
+                return res.status(401).json({
+                    Error: "You must authenticate before modifying an embarked load."
+                })
+            }
+
+            if (boatResult.owner !== req.sub) {
                 return res.status(403).json({
                     Error: "Only the boat owner can manipulate loads that are embarked on their boat."
                 })
@@ -232,8 +240,18 @@ router.put('/:load_id', async (req, res) => {
     
     // If the load is on a boat
     if (load.carrier !== null) {
+
         // Make sure the owner is doing the change
-        if (!req.authenticated || boatResult.owner !== req.sub) {
+        let boatResult = await datastore.get(load.carrier);
+
+        if (!req.authenticated)
+        {
+            return res.status(401).json({
+                Error: "You must authenticate before modifying an embarked load."
+            })
+        }
+
+        if (boatResult.owner !== req.sub) {
             return res.status(403).json({
                 Error: "Only the boat owner can manipulate loads that are embarked on their boat."
             })
@@ -273,8 +291,18 @@ router.patch('/:load_id', m.clientMustAcceptJSON, async (req, res) => {
 
     // If the load is on a boat
     if (load.carrier !== null) {
+
         // Make sure the owner is doing the change
-        if (!req.authenticated || boatResult.owner !== req.sub) {
+        let boatResult = await datastore.get(load.carrier);
+
+        if (!req.authenticated)
+        {
+            return res.status(401).json({
+                Error: "You must authenticate before modifying an embarked load."
+            })
+        }
+
+        if (boatResult.owner !== req.sub) {
             return res.status(403).json({
                 Error: "Only the boat owner can manipulate loads that are embarked on their boat."
             })
