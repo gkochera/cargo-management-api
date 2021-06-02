@@ -130,6 +130,13 @@ class Load
     {
         // Now get the boat back so we can display it
         let [loadResult] = await datastore.get(this.key);
+
+        if (loadResult === undefined)
+        {
+            return undefined;
+        }
+
+
         this.id = loadResult[datastore.KEY].id.toString();
         this.volume = loadResult.volume;
         this.carrier = loadResult.carrier;

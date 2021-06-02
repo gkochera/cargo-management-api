@@ -186,6 +186,16 @@ router.delete('/:load_id', async (req, res) => {
     }
 })
 
+/**
+ * DELETE ALL LOADS (405 SENT)
+ */
+ router.delete('/', (req,res) => {
+    let code = 405
+    let error = {Error: "You cannot delete all loads."}
+    res.setHeader('Allow', 'GET, POST')
+    return res.status(code).json(error)
+})
+
 // GET ALL LOADS
 
 router.get('/', m.clientMustAcceptJSON, async (req, res) => {
@@ -234,9 +244,14 @@ router.put('/:load_id', async (req, res) => {
     // Create a Load object
     let load = new Load(req);
     load.key = key;
-
+    
     // Retrieve the Load object
-    await load.get(req);
+    // Return error if the boat doesn't exist
+    if (await load.get(req) === undefined)
+    {   
+        let error = {Error: "A load with this load_id was not found."};
+        return res.status(404).json(error);
+    }
     
     // If the load is on a boat
     if (load.carrier !== null) {
@@ -273,6 +288,17 @@ router.put('/:load_id', async (req, res) => {
         return res.status(400).json(error)
     }
 })
+
+/**
+ * PUT ALL LOADS (405 SENT)
+ */
+ router.put('/', (req,res) => {
+    let code = 405
+    let error = {Error: "You cannot update all loads."}
+    res.setHeader('Allow', 'GET, POST')
+    return res.status(code).json(error)
+})
+
 // PATCH LOADS (CHANGE PART OF A LOAD)
 
 router.patch('/:load_id', m.clientMustAcceptJSON, async (req, res) => {
@@ -287,6 +313,14 @@ router.patch('/:load_id', m.clientMustAcceptJSON, async (req, res) => {
     }
 
     let loadResult = await h.getLoadFromID(req.params.load_id)
+
+    // Return error if the boat doesn't exist
+    if (loadResult === undefined)
+    {   
+        let error = {Error: "A load with this load_id was not found."};
+        return res.status(404).json(error);
+    }
+
     let load = new Load(loadResult, req);
 
     // If the load is on a boat
@@ -319,9 +353,19 @@ router.patch('/:load_id', m.clientMustAcceptJSON, async (req, res) => {
     }
     else
     {   
-        let error = {Error: "No properties of the boat were included in the body of the request."}
+        let error = {Error: "No properties of the load were included in the body of the request."}
         return res.status(400).json(error)
     }
+})
+
+/**
+ * PUT ALL LOADS (405 SENT)
+ */
+ router.patch('/', (req,res) => {
+    let code = 405
+    let error = {Error: "You cannot update all loads."}
+    res.setHeader('Allow', 'GET, POST')
+    return res.status(code).json(error)
 })
 
 /*  
