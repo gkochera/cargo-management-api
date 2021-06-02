@@ -243,6 +243,16 @@ router.delete('/:boat_id', async (req, res) => {
     return
 })
 
+/**
+ * DELETE ALL BOATS (405 SENT)
+ */
+ router.delete('/', (req,res) => {
+    let code = 405
+    let error = {Error: "You cannot delete all boats."}
+    res.setHeader('Allow', 'GET, POST')
+    return res.status(code).json(error)
+})
+
 // PUT A LOAD IN A BOAT
 
 router.put('/:boat_id/loads/:load_id', async (req, res) => {
