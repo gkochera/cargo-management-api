@@ -213,7 +213,7 @@ router.delete('/:boat_id', async (req, res) => {
         // See if the boat was valid
         if (boatResult === undefined) 
         {
-            res.status(403).json({
+            res.status(404).json({
                 Error: "No boat with this boat_id exists"
             })
             return
