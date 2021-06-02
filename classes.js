@@ -144,6 +144,7 @@ class Load
         this.creation_date = loadResult.creation_date;
         this.key = loadResult[datastore.KEY];
         this.self = nodeRequest.protocol + "://" + nodeRequest.get("host") + "/loads/" + loadResult[datastore.KEY].id
+        return this.id;
     }
 
     /**
