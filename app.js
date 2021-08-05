@@ -97,6 +97,10 @@ app.get('/', (req, res) => {
     return
 })
 
+app.get('/docs', (req, res) => {
+    res.render('pages/documentation');
+})
+
 /**
  *  LISTENER
  */
