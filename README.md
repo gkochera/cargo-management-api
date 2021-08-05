@@ -41,9 +41,9 @@ There exist endpoints for servicing Loads and Boats. There are also endpoints fo
 |POST|/loads|Add a Load| - | - |
 |GET|/loads|Get a Load| - | Yes |
 |GET|/loads/:load_id|Get a Specifc Load| - | - |
-|PUT|/loads/:load_id|Change All Details of a Specific Load| When load is embarked upon a Boat | - |
-|PATCH|/loads/:load_id|Change Only Some Details of a Specific Load| When load is embarked upon a Boat | - |
-|DELETE|/loads/:load_id|Delete a Specific Load| When load is embarked upon a Boat | - |
+|PUT|/loads/:load_id|Change All Details of a Specific Load| When Load is embarked upon a Boat | - |
+|PATCH|/loads/:load_id|Change Only Some Details of a Specific Load| When Load is embarked upon a Boat | - |
+|DELETE|/loads/:load_id|Delete a Specific Load| When Load is embarked upon a Boat | - |
 
 ## Boats
 
