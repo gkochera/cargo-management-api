@@ -50,7 +50,7 @@ There exist endpoints for servicing Loads and Boats. There are also endpoints fo
 |Method|Endpoint|Detail|Protected| Paginated|
 |------------|---------------|---------|-----------|---------|
 |POST|/boats|Add a Boat| Yes | - |
-|GET|/boats|Get all Boat| Yes | - |
+|GET|/boats|Get all Boats| Yes | Yes |
 |GET|/boats/:boat_id|Get a Specific Boat| Yes | - |
 |PUT|/boats/:boat_id|Change All Details of a Specific Boat| Yes | - |
 |PATCH|/boats/:boat_id|Change Only Some Details of a Specific Boat| Yes | - |
