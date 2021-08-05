@@ -26,7 +26,7 @@ This JWT is used as the `Bearer Token` in the `Authorization` header of any HTTP
 
 All requests expect that the `Content-Type` of the HTTP request header is set to `application/json` and the `Accept` value of the HTTP request is also set to `application/json` or a semantically equivalent value.
 
-Endpoints that are identified as `Protected` additionally required the generated JWT generated in the web application be submitted as a `Bearer` token in the `Authorization` header of the HTTP request.
+Endpoints that are identified as `Protected` additionally require the generated JWT generated in the web application be submitted as a `Bearer` token in the `Authorization` header of the HTTP request.
 
 # Endpoints
 
