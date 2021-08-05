@@ -32,7 +32,7 @@ Endpoints that are identified as `Protected` additionally require the generated 
 
 There exist endpoints for servicing Loads and Boats. There are also endpoints for Users which is a available for diagnostic purposes.
 
-> Paginated endpoints return a maximum of 5 values per request. Responses also contain a URI for the `next` page so users can request that data if required.
+> Paginated endpoints return a maximum of 5 elements per request. Responses also contain a URI for the `next` page so users can request that data if required.
 
 ## Loads
 
