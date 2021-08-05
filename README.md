@@ -79,7 +79,7 @@ The Postman collection is setup and ready to run. The environment is preset with
 
 ![Postmant Test Environment](./documentation/assets/postman-environment.png)
 
-You'll need to generate *two* separate, valid JWTs from *two* separate Google accounts. The `jwt1` and `jwt2` field get the token value inserted into them. The `user_id1` and `user_id2` fields get populated with the `sub` value from the JWT for the respective token (i.e. the `sub` value for `jwt1` goes in `user_id1`, etc.) The `sub` value for the JWT can be found just below your name after logging into the web application.
+You'll need to generate **two** separate, valid JWTs from **two** separate Google accounts. The `jwt1` and `jwt2` field get the token value inserted into them. The `user_id1` and `user_id2` fields get populated with the `sub` value from the JWT for the respective token (i.e. the `sub` value for `jwt1` goes in `user_id1`, etc.) The `sub` value for the JWT can be found just below your name after logging into the web application.
 
 
 
