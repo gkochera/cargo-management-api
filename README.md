@@ -18,6 +18,6 @@ Once you have authenticated with Google, you will be presented with a new screen
 
 ![JWT Issued](./documentation/assets/generated-jwt.png)
 
-We will use that JWT as our `Bearer Token` in the `Authorization` header of any HTTP request that is protected.
+This JWT is used as the `Bearer Token` in the `Authorization` header of any HTTP request made to any API endpoint. that is protected.
 
 
