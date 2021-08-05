@@ -71,6 +71,18 @@ There exist endpoints for servicing Loads and Boats. There are also endpoints fo
 |GET|/users/:user_id|Get a Specific Registered User| - | - |
 
 
+# Testing
+
+A Postman test suite is included to demonstrate the robustness of the API. They can be found in the `/test` directory of this repo. The test suite consists of 290 tests across 155 separate requests.
+
+The Postman collection is setup and ready to run. The environment is preset with the deployed version of the API and needs 4 fields filled in.
+
+![Postmant Test Environment](./assets/postman-environment.png)
+
+You'll need to generate two separate, valid JWTs from two separate Google accounts. The `jwt1` and `jwt2` field get the token value inserted into them. The `user_id1` and `user_id2` fields get populated with the `sub` value from the JWT for the respective token. This value can be easily found after logging in at the bottom of the web application.
+
+
+
 
 
 
