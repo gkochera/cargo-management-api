@@ -40,40 +40,60 @@ There exist endpoints for servicing Loads and Boats. There are also endpoints fo
 
 ## Loads
 
-|Method|Endpoint|Detail|Protected| Paginated|
-|------------|---------------|---------|-----------|---------|
-|POST|/loads|Add a Load| - | - |
-|GET|/loads|Get a Load| - | Yes |
-|GET|/loads/:load_id|Get a Specifc Load| - | - |
-|PUT|/loads/:load_id|Change All Details of a Specific Load| When Load is embarked upon a Boat | - |
-|PATCH|/loads/:load_id|Change Only Some Details of a Specific Load| When Load is embarked upon a Boat | - |
-|DELETE|/loads/:load_id|Delete a Specific Load| When Load is embarked upon a Boat | - |
+|Method|Endpoint|Detail|Protected| Paginated|Body Required|
+|------------|---------------|---------|-----------|---------|------------|
+|POST|/loads|Add a Load| - | - | Yes |
+|GET|/loads|Get a Load| - | Yes | - |
+|GET|/loads/:load_id|Get a Specifc Load| - | - | - |
+|PUT|/loads/:load_id|Change All Details of a Specific Load| When Load is embarked upon a Boat | - | Yes |
+|PATCH|/loads/:load_id|Change Only Some Details of a Specific Load| When Load is embarked upon a Boat | - | Yes |
+|DELETE|/loads/:load_id|Delete a Specific Load| When Load is embarked upon a Boat | - | - |
+
+### Sample Request Body
+
+```JSON
+{
+    "volume": 900,
+    "content": "Legos",
+    "creation_date": "09/12/2014"}
+```
+
+> Creation date is *not* auto-generated currently. The user expected to provide their desired value.
 
 ## Boats
 
-|Method|Endpoint|Detail|Protected| Paginated|
-|------------|---------------|---------|-----------|---------|
-|POST|/boats|Add a Boat| Yes | - |
-|GET|/boats|Get all Boats| Yes | Yes |
-|GET|/boats/:boat_id|Get a Specific Boat| Yes | - |
-|PUT|/boats/:boat_id|Change All Details of a Specific Boat| Yes | - |
-|PATCH|/boats/:boat_id|Change Only Some Details of a Specific Boat| Yes | - |
-|DELETE|/boats/:boat_id|Delete a Specific Boat| Yes | - |
+|Method|Endpoint|Detail|Protected| Paginated|Body Required|
+|------------|---------------|---------|-----------|---------|------------|
+|POST|/boats|Add a Boat| Yes | - | Yes |
+|GET|/boats|Get all Boats| Yes | Yes | - |
+|GET|/boats/:boat_id|Get a Specific Boat| Yes | - | - |
+|PUT|/boats/:boat_id|Change All Details of a Specific Boat| Yes | - | Yes |
+|PATCH|/boats/:boat_id|Change Only Some Details of a Specific Boat| Yes | - | Yes |
+|DELETE|/boats/:boat_id|Delete a Specific Boat| Yes | - | - |
+
+### Sample Request Body
+
+```JSON
+{
+    "name": "Grey Thunder",
+    "type": "Schooner",
+    "length": 340
+}
+```
 
 ## Loading and Unloading a Boat
 
-|Method|Endpoint|Detail|Protected| Paginated|
-|------------|---------------|---------|-----------|---------|
-|PUT|/boats/:boat_id/loads/:load_id|Add a Specific Load to a Specific Boat| Yes | - |
-|DELETE|/boats/:boat_id/loads/:load_id|Remove a Specific Load from a Specific Boat| Yes | - |
+|Method|Endpoint|Detail|Protected| Paginated|Body Required|
+|------------|---------------|---------|-----------|---------|------------|
+|PUT|/boats/:boat_id/loads/:load_id|Add a Specific Load to a Specific Boat| Yes | - | - |
+|DELETE|/boats/:boat_id/loads/:load_id|Remove a Specific Load from a Specific Boat| Yes | - | - |
 
 ## Users
 
-|Method|Endpoint|Detail|Protected| Paginated|
-|------------|---------------|---------|-----------|---------|
-|GET|/users|Get All Registered Users| - | Yes |
-|GET|/users/:user_id|Get a Specific Registered User| - | - |
-
+|Method|Endpoint|Detail|Protected| Paginated|Body Required|
+|------------|---------------|---------|-----------|---------|------------|
+|GET|/users|Get All Registered Users| - | Yes | - |
+|GET|/users/:user_id|Get a Specific Registered User| - | - | - |
 
 # Testing
 
