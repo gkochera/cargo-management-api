@@ -1,0 +1,6901 @@
+{
+	"info": {
+		"_postman_id": "14121f29-22fb-4caf-ab8a-3a111e395854",
+		"name": "kocherag_project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Grading",
+			"item": [
+				{
+					"name": "Status Codes",
+					"item": [
+						{
+							"name": "200 - Get Loads",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(200, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/loads",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "201 - Add a Boat",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(201, pm);",
+											"",
+											"pm.environment.set('gradingboat1', pm.response.json().id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt2}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Constantine\",\n    \"length\": 78,\n    \"type\": \"Wayfarer\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "401 - Get Boats without JWT",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(401, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/boats",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "403 - Get another User's Boat",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(403, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/boats/{{gradingboat1}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{gradingboat1}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "404 - Get an Invalid Load",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(404, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats/1000",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"1000"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "405 - Update All Boats",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(405, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/boats",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "406 - Add a Boat (Accept: img/png)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(406, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "img/png",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Live Time\",\n    \"length\": 71,\n    \"type\": \"Cloud Breaker\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "204 - Delete a Boat",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt2}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Constantine\",\n    \"length\": 78,\n    \"type\": \"Wayfarer\",\n    \"public\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats/{{gradingboat1}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{gradingboat1}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "CRUD For Non-User Entities",
+					"item": [
+						{
+							"name": "Boats",
+							"item": [
+								{
+									"name": "Create a Boat",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.environment.set('gradingboat1', pm.response.json().id)",
+													"",
+													"custom.validateResponseCode(201, pm);",
+													"custom.bodyIsJSON(pm);",
+													"",
+													"let boat = {",
+													"    name: \"Cool Grading Boat\",",
+													"    length: 45,",
+													"    type: \"Awesome\"",
+													"}",
+													"",
+													"custom.bodyIsValid(pm, boat)"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Cool Grading Boat\",\n    \"length\": 45,\n    \"type\": \"Awesome\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get a Boat",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(200, pm);",
+													"",
+													"let boat = {",
+													"    id: pm.environment.get('gradingboat1'),",
+													"    name: \"Cool Grading Boat\",",
+													"    length: 45,",
+													"    type: \"Awesome\",",
+													"}",
+													"",
+													"custom.bodyIsValid(pm, boat);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update a Boat (Partial)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(200, pm);",
+													"",
+													"let boat = {",
+													"    id: pm.environment.get('gradingboat1'),",
+													"    name: \"New Better Boat\",",
+													"    length: 45,",
+													"    type: \"Awesome\",",
+													"}",
+													"",
+													"custom.bodyIsValid(pm, boat);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"New Better Boat\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update a Boat (Complete)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(303, pm);",
+													"custom.validateHeader('Location', pm.request.url.toString(), pm)"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"An Even Better Boat\",\n    \"length\": 78,\n    \"type\": \"Submarine\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete a Boat",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(204, pm);",
+													"custom.emptyBody(pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Loads",
+							"item": [
+								{
+									"name": "Create a Load",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.environment.set('gradingload1', pm.response.json().id)",
+													"",
+													"custom.validateResponseCode(201, pm);",
+													"custom.bodyIsJSON(pm);",
+													"",
+													"let load = {",
+													"    volume: 1409,",
+													"    content: \"Napkins\",",
+													"    creation_date: \"04/06/2015\"",
+													"}",
+													"",
+													"custom.bodyIsValid(pm, load);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"volume\": 1409,\n    \"content\": \"Napkins\",\n    \"creation_date\": \"04/06/2015\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/loads",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get a Load",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(200, pm);",
+													"",
+													"let load = {",
+													"    volume: 1409,",
+													"    content: \"Napkins\",",
+													"    creation_date: \"04/06/2015\"",
+													"}",
+													"",
+													"custom.bodyIsValid(pm, load);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/loads/{{gradingload1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads",
+												"{{gradingload1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update a Load (Partial)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(200, pm);",
+													"",
+													"let load = {",
+													"    volume: 3145,",
+													"    content: \"Napkins\",",
+													"    creation_date: \"04/06/2015\"",
+													"}",
+													"",
+													"custom.bodyIsValid(pm, load);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"volume\": 3145\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/loads/{{gradingload1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads",
+												"{{gradingload1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update a Load (Complete)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(303, pm);",
+													"custom.validateHeader('Location', `${pm.request.url.toString()}`, pm)"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"volume\": 73669,\n    \"content\": \"Desks\",\n    \"creation_date\": \"07/26/1978\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/loads/{{gradingload1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads",
+												"{{gradingload1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete a Load",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(204, pm);",
+													"custom.emptyBody(pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/loads/{{gradingload1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads",
+												"{{gradingload1}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Read For Non-User Entity Collections",
+					"item": [
+						{
+							"name": "Boats",
+							"item": [
+								{
+									"name": "Get all Boats (User1)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.bodyIsJSON(pm);",
+													"custom.validateResponseCode(200, pm);",
+													"",
+													"let json = pm.response.json()",
+													"let statusObject = json[json.length - 1];",
+													"",
+													"pm.test(\"User boat count is correct.\", function() {",
+													"    pm.expect(statusObject['totalUserBoats']).to.equal(0);",
+													"})",
+													"",
+													"pm.test(\"Total boat count is correct.\", function() {",
+													"    pm.expect(statusObject['totalBoats']).to.equal(0);",
+													"})"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Add Boat1 (User1)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.environment.set('gradingboat1', pm.response.json().id)",
+													"custom.validateResponseCode(201, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"User1 Boat\",\n    \"length\": 1,\n    \"type\": \"Cool Boat\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Add Boat2 (User2)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.environment.set('gradingboat2', pm.response.json().id)",
+													"custom.validateResponseCode(201, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt2}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"User2 Boat\",\n    \"length\": 2,\n    \"type\": \"Cooler Boat\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get all Boats (User1)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.bodyIsJSON(pm);",
+													"custom.validateResponseCode(200, pm);",
+													"",
+													"let boat = {",
+													"    name: \"User1 Boat\",",
+													"    length: 1,",
+													"    type: \"Cool Boat\",",
+													"    owner: pm.environment.get('user_id1')",
+													"}",
+													"",
+													"// Verify the counts",
+													"custom.objectInArrayIsValid(pm, 0, boat)",
+													"",
+													"let status = {",
+													"    totalUserBoats: 1,",
+													"    totalBoats: 2",
+													"}",
+													"",
+													"// Verify the boat is correct to the user",
+													"custom.objectInArrayIsValid(pm, 1, status)"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get all Boats (User2)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.bodyIsJSON(pm);",
+													"custom.validateResponseCode(200, pm);",
+													"",
+													"let boat = {",
+													"    name: \"User2 Boat\",",
+													"    length: 2,",
+													"    type: \"Cooler Boat\",",
+													"    owner: pm.environment.get('user_id2')",
+													"}",
+													"",
+													"// Verify the counts",
+													"custom.objectInArrayIsValid(pm, 0, boat)",
+													"",
+													"let status = {",
+													"    totalUserBoats: 1,",
+													"    totalBoats: 2",
+													"}",
+													"",
+													"// Verify the boat is correct to the user",
+													"custom.objectInArrayIsValid(pm, 1, status)"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt2}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get all Boats (Unauthenticated)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.bodyIsJSON(pm);",
+													"custom.validateResponseCode(401, pm);",
+													"",
+													"custom.validErrorMessage(pm, \"You must be authenticated to perform this action.\")"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Loads",
+							"item": [
+								{
+									"name": "Get all Loads",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.bodyIsJSON(pm);",
+													"custom.validateResponseCode(200, pm);",
+													"",
+													"let status = {",
+													"    totalLoads: 0",
+													"}",
+													"",
+													"// Verify the boat is correct to the user",
+													"custom.objectInArrayIsValid(pm, 0, status)"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/loads",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Add Load1 (Unauthenticated)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.environment.set('gradingload1', pm.response.json().id)",
+													"custom.validateResponseCode(201, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"volume\": 751,\n    \"content\": \"Books\",\n    \"creation_date\": \"01/02/1978\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/loads",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Add Load2 (User1)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.environment.set('gradingload2', pm.response.json().id)",
+													"custom.validateResponseCode(201, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"volume\": 459,\n    \"content\": \"Worms\",\n    \"creation_date\": \"11/18/2019\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/loads",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Add Load3 (User2)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.environment.set('gradingload3', pm.response.json().id)",
+													"",
+													"custom.validateResponseCode(201, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt2}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"volume\": 7122,\n    \"content\": \"Computer Displays\",\n    \"creation_date\": \"1/9/2020\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/loads",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get all Loads",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.bodyIsJSON(pm);",
+													"custom.validateResponseCode(200, pm);",
+													"",
+													"let status = {",
+													"    totalLoads: 3",
+													"}",
+													"",
+													"pm.test(\"All three loads are present\", function() {",
+													"    pm.expect(pm.response.json().length).to.equal(4);",
+													"})",
+													"",
+													"",
+													"",
+													"custom.objectInArrayIsValid(pm, 3, status)",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/loads",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Managing Relationships Between Non-User Entities",
+					"item": [
+						{
+							"name": "Loading A Boat",
+							"item": [
+								{
+									"name": "Verify Boat1 contains No Loads",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"let boat = {",
+													"    \"id\": pm.environment.get('gradingboat1'),",
+													"    \"name\": \"User1 Boat\",",
+													"    \"type\": \"Cool Boat\",",
+													"    \"length\": 1,",
+													"    \"owner\": pm.environment.get('user_id1'),",
+													"    \"self\": pm.request.url.toString()",
+													"}",
+													"",
+													"custom.bodyIsValid(pm, boat);",
+													"",
+													"pm.test(\"Loads is empty\", function() {",
+													"    pm.expect(pm.response.json().loads.length).to.equal(0);",
+													"})",
+													"",
+													"custom.validateResponseCode(200, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Verify Load1 not Assigned",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"let load = {",
+													"    \"id\": pm.environment.get('gradingload1'),",
+													"    \"volume\": 751,",
+													"    \"carrier\": null,",
+													"    \"content\": \"Books\",",
+													"    \"creation_date\": \"01/02/1978\",",
+													"    \"self\": pm.request.url.toString()",
+													"}",
+													"",
+													"custom.bodyIsValid(pm, load);",
+													"custom.validateResponseCode(200, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/loads/{{gradingload1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads",
+												"{{gradingload1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Verify Load2 not Assigned",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"let load = {",
+													"    \"id\": pm.environment.get('gradingload2'),",
+													"    \"volume\": 459,",
+													"    \"carrier\": null,",
+													"    \"content\": \"Worms\",",
+													"    \"creation_date\": \"11/18/2019\",",
+													"    \"self\": pm.request.url.toString()",
+													"}",
+													"",
+													"custom.bodyIsValid(pm, load);",
+													"custom.validateResponseCode(200, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/loads/{{gradingload2}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads",
+												"{{gradingload2}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Put Load1 in Boat1 (User1)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.emptyBody(pm);",
+													"custom.validateResponseCode(204, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}/loads/{{gradingload1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}",
+												"loads",
+												"{{gradingload1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Put Load2 in Boat1 (User1)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.emptyBody(pm);",
+													"custom.validateResponseCode(204, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}/loads/{{gradingload2}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}",
+												"loads",
+												"{{gradingload2}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Verify Boat1 contains Load1 and Load2",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"let boat = {",
+													"    \"id\": pm.environment.get('gradingboat1'),",
+													"    \"name\": \"User1 Boat\",",
+													"    \"type\": \"Cool Boat\",",
+													"    \"length\": 1,",
+													"    \"owner\": pm.environment.get('user_id1'),",
+													"    \"self\": pm.request.url.toString()",
+													"}",
+													"",
+													"custom.bodyIsValid(pm, boat);",
+													"",
+													"pm.test(\"Boat has two loads\", function() {",
+													"    pm.expect(pm.response.json().loads.length).to.equal(2);",
+													"})",
+													"",
+													"pm.test(\"Boat has the correct loads\", function() {",
+													"    let loads = pm.response.json().loads",
+													"    let loadIds = [loads[0]['id'], loads[1]['id']]",
+													"    let expectedLoadIds = [",
+													"        pm.environment.get('gradingload1'),",
+													"        pm.environment.get('gradingload2')",
+													"    ]",
+													"",
+													"    pm.expect(expectedLoadIds).to.deep.include.members(loadIds);",
+													"})",
+													"",
+													"custom.validateResponseCode(200, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Verify Load1 is in Boat1",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"let load = {",
+													"    \"id\": pm.environment.get('gradingload1'),",
+													"    \"volume\": 751,",
+													"    \"content\": \"Books\",",
+													"    \"creation_date\": \"01/02/1978\",",
+													"    \"self\": pm.request.url.toString()",
+													"}",
+													"",
+													"let boat = {",
+													"    \"id\": pm.environment.get('gradingboat1'),",
+													"    \"name\": \"User1 Boat\",",
+													"    \"type\": \"Cool Boat\",",
+													"    \"length\": 1,",
+													"    \"owner\": pm.environment.get('user_id1'),",
+													"}",
+													"",
+													"custom.bodyIsValid(pm, load);",
+													"",
+													"let carrier = pm.response.json().carrier;",
+													"let expectedKeys = Object.keys(boat);",
+													"",
+													"expectedKeys.map(key => {",
+													"    pm.test(`'${key}' is '${boat[key]}'`, function() {",
+													"        pm.expect(carrier[key]).to.equal(boat[key])",
+													"    })",
+													"})",
+													"",
+													"custom.validateResponseCode(200, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/loads/{{gradingload1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads",
+												"{{gradingload1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Verify Load2 is in Boat1",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"let load = {",
+													"    \"id\": pm.environment.get('gradingload2'),",
+													"    \"volume\": 459,",
+													"    \"content\": \"Worms\",",
+													"    \"creation_date\": \"11/18/2019\",",
+													"    \"self\": pm.request.url.toString()",
+													"}",
+													"",
+													"let boat = {",
+													"    \"id\": pm.environment.get('gradingboat1'),",
+													"    \"name\": \"User1 Boat\",",
+													"    \"length\": 1,",
+													"    \"type\": \"Cool Boat\",",
+													"    \"owner\": pm.environment.get('user_id1'),",
+													"}",
+													"",
+													"custom.bodyIsValid(pm, load);",
+													"",
+													"let carrier = pm.response.json().carrier;",
+													"let expectedKeys = Object.keys(boat);",
+													"",
+													"expectedKeys.map(key => {",
+													"    pm.test(`'${key}' is '${boat[key]}'`, function() {",
+													"        pm.expect(carrier[key]).to.equal(boat[key])",
+													"    })",
+													"})",
+													"",
+													"custom.validateResponseCode(200, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/loads/{{gradingload2}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads",
+												"{{gradingload2}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Unloading A Boat",
+							"item": [
+								{
+									"name": "Remove Load1 from Boat1 (User1)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.emptyBody(pm);",
+													"custom.validateResponseCode(204, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}/loads/{{gradingload1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}",
+												"loads",
+												"{{gradingload1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Remove Load2 from Boat1 (User2)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.emptyBody(pm);",
+													"custom.validateResponseCode(204, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}/loads/{{gradingload2}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}",
+												"loads",
+												"{{gradingload2}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Verify Boat1 Contains No Loads",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"let boat = {",
+													"    \"id\": pm.environment.get('gradingboat1'),",
+													"    \"name\": \"User1 Boat\",",
+													"    \"type\": \"Cool Boat\",",
+													"    \"length\": 1,",
+													"    \"owner\": pm.environment.get('user_id1'),",
+													"    \"self\": pm.request.url.toString()",
+													"}",
+													"",
+													"custom.bodyIsValid(pm, boat);",
+													"",
+													"pm.test(\"Loads is empty\", function() {",
+													"    pm.expect(pm.response.json().loads.length).to.equal(0);",
+													"})",
+													"",
+													"custom.validateResponseCode(200, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Verify Load1 not Assigned",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"let load = {",
+													"    \"id\": pm.environment.get('gradingload1'),",
+													"    \"volume\": 751,",
+													"    \"carrier\": null,",
+													"    \"content\": \"Books\",",
+													"    \"creation_date\": \"01/02/1978\",",
+													"    \"self\": pm.request.url.toString()",
+													"}",
+													"",
+													"custom.bodyIsValid(pm, load);",
+													"custom.validateResponseCode(200, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/loads/{{gradingload1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads",
+												"{{gradingload1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Verify Load2 not Assigned",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"let load = {",
+													"    \"id\": pm.environment.get('gradingload2'),",
+													"    \"volume\": 459,",
+													"    \"carrier\": null,",
+													"    \"content\": \"Worms\",",
+													"    \"creation_date\": \"11/18/2019\",",
+													"    \"self\": pm.request.url.toString()",
+													"}",
+													"",
+													"custom.bodyIsValid(pm, load);",
+													"custom.validateResponseCode(200, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/loads/{{gradingload2}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads",
+												"{{gradingload2}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Access Control of Protected Entities",
+					"item": [
+						{
+							"name": "Creating",
+							"item": [
+								{
+									"name": "Create a Boat without Authenticating",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(401, pm);",
+													"custom.validErrorMessage(pm, \"You must be authenticated to perform this action.\")"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Unnamed Boat\",\n    \"length\": 155,\n    \"type\": \"Shadow\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Boat3 as User2",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(201, pm);",
+													"",
+													"pm.test(\"Boat created is tied to 'sub' of the JWT that created it.\", function() {",
+													"    pm.expect(pm.response.json().owner).to.equal(pm.environment.get('user_id2'))",
+													"})",
+													"",
+													"pm.environment.set('gradingboat3', pm.response.json().id);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt2}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Unnamed Boat\",\n    \"length\": 155,\n    \"type\": \"Shadow\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Cleanup - Delete Boat3",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt2}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Unnamed Boat\",\n    \"length\": 155,\n    \"type\": \"Shadow\",\n    \"public\": true\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat3}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat3}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Reading",
+							"item": [
+								{
+									"name": "Get Boat2 as User1",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(403, pm);",
+													"custom.validErrorMessage(pm, \"Boats are protected entities that are only viewable by the owner. Verify you are using the correct JWT.\")"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat2}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat2}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get Boat1 as User2",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(403, pm);",
+													"custom.validErrorMessage(pm, \"Boats are protected entities that are only viewable by the owner. Verify you are using the correct JWT.\")"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt2}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get Boat1 as User1",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(200, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get Boat2 as User2",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(200, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt2}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat2}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat2}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get Boat1 Unauthenticated",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(401, pm);",
+													"custom.validErrorMessage(pm, \"You must be authenticated to perform this action.\")"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get Boat2 Unauthenticated",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(401, pm);",
+													"custom.validErrorMessage(pm, \"You must be authenticated to perform this action.\")"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat2}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat2}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get All Boats Unauthenticated",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(401, pm);",
+													"custom.validErrorMessage(pm, \"You must be authenticated to perform this action.\")"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get All Boats as User1",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.bodyIsJSON(pm);",
+													"custom.validateResponseCode(200, pm);",
+													"",
+													"let boat = {",
+													"    name: \"User1 Boat\",",
+													"    length: 1,",
+													"    type: \"Cool Boat\",",
+													"    owner: pm.environment.get('user_id1')",
+													"}",
+													"",
+													"// Verify the counts",
+													"custom.objectInArrayIsValid(pm, 0, boat)",
+													"",
+													"let status = {",
+													"    totalUserBoats: 1,",
+													"    totalBoats: 2",
+													"}",
+													"",
+													"// Verify the boat is correct to the user",
+													"custom.objectInArrayIsValid(pm, 1, status)"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get All Boats as User2",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.bodyIsJSON(pm);",
+													"custom.validateResponseCode(200, pm);",
+													"",
+													"let boat = {",
+													"    name: \"User2 Boat\",",
+													"    length: 2,",
+													"    type: \"Cooler Boat\",",
+													"    owner: pm.environment.get('user_id2')",
+													"}",
+													"",
+													"// Verify the boat is correct to the user",
+													"custom.objectInArrayIsValid(pm, 0, boat)",
+													"",
+													"let status = {",
+													"    totalUserBoats: 1,",
+													"    totalBoats: 2",
+													"}",
+													"",
+													"// Verify the counts",
+													"custom.objectInArrayIsValid(pm, 1, status)"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt2}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Updating",
+							"item": [
+								{
+									"name": "Update Boat1 as User2 (Full)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(403, pm);",
+													"custom.validErrorMessage(pm, \"This boat_id exists but you are not the owner.\")"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt2}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"A New Name\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update Boat1 Unauthenticated (Full)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(401, pm);",
+													"custom.validErrorMessage(pm, \"You must be authenticated to perform this action.\")"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"A New Name\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update Boat1 as User1 (Full)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(303, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"A New Name\",\n    \"length\": 50,\n    \"type\": \"Quicken\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update Boat1 as User2 (Partial)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(403, pm);",
+													"custom.validErrorMessage(pm, \"This boat_id exists but you are not the owner.\")"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt2}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"A New Name\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update Boat1 Unauthenticated (Partial)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(401, pm);",
+													"custom.validErrorMessage(pm, \"You must be authenticated to perform this action.\")"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"A New Name\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update Boat1 as User1 (Partial)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(200, pm);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"A New Name\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Add Load1 to Boat1 as User2",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(403, pm);",
+													"custom.validErrorMessage(pm, \"You cannot add a load to someone else's boat.\")"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt2}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"A New Name\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}/loads/{{gradingload1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}",
+												"loads",
+												"{{gradingload1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Add Load1 to Boat1 Unauthenticated",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(401, pm);",
+													"custom.validErrorMessage(pm, \"You must be authenticated to perform this action.\")"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"A New Name\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}/loads/{{gradingload1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}",
+												"loads",
+												"{{gradingload1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Add Load1 to Boat1 as User1",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(204, pm);",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"A New Name\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}/loads/{{gradingload1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}",
+												"loads",
+												"{{gradingload1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Change Load1 (on Boat1) as User2 (Partial)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(403, pm);",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt2}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"content\": \"Different Content\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/loads/{{gradingload1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads",
+												"{{gradingload1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Change Load1 (on Boat1) Unauthenticated (Partial)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(401, pm);",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"content\": \"Different Content\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/loads/{{gradingload1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads",
+												"{{gradingload1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Change Load1 (on Boat1) as User2 (Complete)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(403, pm);",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt2}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"content\": \"Different Content\",\n    \"volume\": 2039,\n    \"creation_date\": \"11/20/2019\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/loads/{{gradingload1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads",
+												"{{gradingload1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Change Load1 (on Boat1) Unauthenticated (Complete)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(401, pm);",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"content\": \"Different Content\",\n    \"volume\": 2039,\n    \"creation_date\": \"11/20/2019\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/loads/{{gradingload1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads",
+												"{{gradingload1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete Load1 (on Boat1) as User2",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(403, pm);",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt2}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"content\": \"Different Content\",\n    \"volume\": 2039,\n    \"creation_date\": \"11/20/2019\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/loads/{{gradingload1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads",
+												"{{gradingload1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete Load1 (on Boat1) Unauthenticated",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(401, pm);",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"content\": \"Different Content\",\n    \"volume\": 2039,\n    \"creation_date\": \"11/20/2019\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/loads/{{gradingload1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads",
+												"{{gradingload1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Remove Load1 from Boat1 as User2",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(403, pm);",
+													"custom.validErrorMessage(pm, \"You cannot remove a load from someone else's boat.\")"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt2}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"A New Name\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}/loads/{{gradingload1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}",
+												"loads",
+												"{{gradingload1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Remove Load1 from Boat1 Unauthenticated",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(401, pm);",
+													"custom.validErrorMessage(pm, \"You must be authenticated to perform this action.\")"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"A New Name\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}/loads/{{gradingload1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}",
+												"loads",
+												"{{gradingload1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Remove Load1 from Boat1 as User1",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(204, pm);",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"A New Name\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}/loads/{{gradingload1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}",
+												"loads",
+												"{{gradingload1}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Deleting",
+							"item": [
+								{
+									"name": "Delete Boat1 Unauthenticated",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(401, pm);",
+													"custom.validErrorMessage(pm, \"You must be authenticated to perform this action.\")"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete Boat1 as User2",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(403, pm);",
+													"custom.validErrorMessage(pm, \"This boat_id exists but you are not the owner.\")"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt2}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete Boat1 as User1",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(204, pm);",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat1}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat1}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete Boat2 as User2",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"custom.validateResponseCode(204, pm);",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt2}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{appurl}}/boats/{{gradingboat2}}",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats",
+												"{{gradingboat2}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Pagination",
+					"item": [
+						{
+							"name": "Boats",
+							"item": [
+								{
+									"name": "Create Boat1 (User1)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.environment.set('paginationboat1', pm.response.json().id);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Constantine\",\n    \"length\": 78,\n    \"type\": \"Wayfarer\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Boat2 (User1)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.environment.set('paginationboat2', pm.response.json().id);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Bridgedale\",\n    \"length\": 711,\n    \"type\": \"Schooner\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Boat3 (User1)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.environment.set('paginationboat3', pm.response.json().id);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Hyperview\",\n    \"length\": 74,\n    \"type\": \"Ship\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Boat4 (User1)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.environment.set('paginationboat4', pm.response.json().id);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Butterworth\",\n    \"length\": 33,\n    \"type\": \"Lakefarer\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Boat5 (User1)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.environment.set('paginationboat5', pm.response.json().id);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Honeywell\",\n    \"length\": 632,\n    \"type\": \"Streamer\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Boat6 (User1)",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.environment.set('paginationboat6', pm.response.json().id);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Minedweller\",\n    \"length\": 1000,\n    \"type\": \"Rockboat\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get User1 Boats",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Verify the returned results contain 5 boats\", function () {",
+													"    let json = pm.response.json()",
+													"    let boats = 0;",
+													"    json.forEach(element => {",
+													"        if (element.hasOwnProperty(\"self\"))",
+													"        {",
+													"            boats += 1;",
+													"        }",
+													"    })",
+													"    pm.expect(boats).to.equal(5);",
+													"})",
+													"",
+													"pm.test(\"Verify the returned results contain a next URL\", function() {",
+													"    let json = pm.response.json()",
+													"    let hasNext = false;",
+													"    json.forEach(element => {",
+													"        if (element.hasOwnProperty(\"next\"))",
+													"        {",
+													"            hasNext = true;",
+													"        }",
+													"    })",
+													"    pm.expect(hasNext).to.be.true",
+													"})",
+													"",
+													"pm.test(\"Verify the returned results contain the total boat count of 6 and total user boat count of 6.\", function() {",
+													"    let json = pm.response.json()",
+													"    json.forEach(element => {",
+													"        if (element.hasOwnProperty(\"totalUserBoats\"))",
+													"        {",
+													"            pm.expect(element[\"totalUserBoats\"]).to.equal(6);",
+													"        }",
+													"        if (element.hasOwnProperty(\"totalBoats\"))",
+													"        {",
+													"            pm.expect(element[\"totalBoats\"]).to.equal(6);",
+													"        }",
+													"    })",
+													"})",
+													"",
+													"custom.validateResponseCode(200, pm);",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{jwt1}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/boats",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"boats"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Loads",
+							"item": [
+								{
+									"name": "Create Load4",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.environment.set('paginationload4', pm.response.json().id);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"volume\": 4120,\n    \"content\": \"Ball Bearings\",\n    \"creation_date\": \"07/08/2013\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/loads",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Load5",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.environment.set('paginationload5', pm.response.json().id);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"volume\": 320,\n    \"content\": \"Diamonds\",\n    \"creation_date\": \"01/20/2016\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/loads",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Load6",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.environment.set('paginationload6', pm.response.json().id);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"volume\": 71336,\n    \"content\": \"Lead\",\n    \"creation_date\": \"05/06/2023\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/loads",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get all Loads",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Verify the returned results contain 5 loads\", function () {",
+													"    let json = pm.response.json()",
+													"    let loads = 0;",
+													"    json.forEach(element => {",
+													"        if (element.hasOwnProperty(\"self\"))",
+													"        {",
+													"            loads += 1;",
+													"        }",
+													"    })",
+													"    pm.expect(loads).to.equal(5);",
+													"})",
+													"",
+													"pm.test(\"Verify the returned results contain a next URL\", function() {",
+													"    let json = pm.response.json()",
+													"    let hasNext = false;",
+													"    json.forEach(element => {",
+													"        if (element.hasOwnProperty(\"next\"))",
+													"        {",
+													"            hasNext = true;",
+													"        }",
+													"    })",
+													"    pm.expect(hasNext).to.be.true",
+													"})",
+													"",
+													"pm.test(\"Verify the returned results contain the total load count of 6.\", function() {",
+													"    let json = pm.response.json()",
+													"    json.forEach(element => {",
+													"        if (element.hasOwnProperty(\"totalLoads\"))",
+													"        {",
+													"            pm.expect(element[\"totalLoads\"]).to.equal(6);",
+													"        }",
+													"    })",
+													"})",
+													"",
+													"custom.validateResponseCode(200, pm);",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{appurl}}/loads",
+											"host": [
+												"{{appurl}}"
+											],
+											"path": [
+												"loads"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Cleanup",
+					"item": [
+						{
+							"name": "Delete Load1 Unauthenticated",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/loads/{{gradingload1}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads",
+										"{{gradingload1}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Load2 Unauthenticated",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/loads/{{gradingload2}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads",
+										"{{gradingload2}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Load3 Unauthenticated",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/loads/{{gradingload3}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads",
+										"{{gradingload3}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Load4",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/loads/{{paginationload4}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads",
+										"{{paginationload4}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Load5",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/loads/{{paginationload5}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads",
+										"{{paginationload5}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Load6",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/loads/{{paginationload6}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads",
+										"{{paginationload6}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Boat1 (User1)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/boats/{{paginationboat1}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{paginationboat1}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Boat2 (User1)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/boats/{{paginationboat2}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{paginationboat2}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Boat3 (User1)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/boats/{{paginationboat3}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{paginationboat3}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Boat4 (User1)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/boats/{{paginationboat4}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{paginationboat4}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Boat5 (User1)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/boats/{{paginationboat5}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{paginationboat5}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Boat6 (User1)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/boats/{{paginationboat6}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{paginationboat6}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Testing",
+			"item": [
+				{
+					"name": "Add Boats",
+					"item": [
+						{
+							"name": "Add Boat1User1 (Authenticated)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.environment.set('boat1', pm.response.json().id)",
+											"",
+											"custom.validateResponseCode(201, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Timeless Horizon\",\n    \"length\": 29,\n    \"type\": \"Cruiser\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Boat2User1 (Authenticated)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.environment.set('boat2', pm.response.json().id)",
+											"",
+											"custom.validateResponseCode(201, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Winding Folly\",\n    \"length\": 34,\n    \"type\": \"Monitor\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Boat3User2 (Authenticated)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.environment.set('boat3', pm.response.json().id)",
+											"",
+											"custom.validateResponseCode(201, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt2}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Mountain Glory\",\n    \"length\": 20,\n    \"type\": \"Schooner\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Boat4User2 (Authenticated)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.environment.set('boat4', pm.response.json().id)",
+											"",
+											"custom.validateResponseCode(201, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt2}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Silver Peak\",\n    \"length\": 78,\n    \"type\": \"Yacht\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Boat5User1 (Authenticated)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.environment.set('boat5', pm.response.json().id)",
+											"",
+											"custom.validateResponseCode(201, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Strong Mango\",\n    \"length\": 56,\n    \"type\": \"Sailboat\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Boat6User1 (Authenticated)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.environment.set('boat6', pm.response.json().id)",
+											"",
+											"custom.validateResponseCode(201, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Streaming Wheel\",\n    \"length\": 36,\n    \"type\": \"Destroyer\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Boat7User2 (Authenticated)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.environment.set('boat7', pm.response.json().id)",
+											"",
+											"custom.validateResponseCode(201, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt2}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Independence\",\n    \"length\": 57,\n    \"type\": \"Cruise Ship\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Boat8User1 (Authenticated)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.environment.set('boat8', pm.response.json().id)",
+											"",
+											"custom.validateResponseCode(201, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Black Widow\",\n    \"length\": 12,\n    \"type\": \"Waverunner\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Boat9User1 (Authenticated)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.environment.set('boat9', pm.response.json().id)",
+											"",
+											"custom.validateResponseCode(201, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Key Nine Five\",\n    \"length\": 36,\n    \"type\": \"Pontoon\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Boat (Not Authenticated)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(401, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Winding Folly\",\n    \"length\": 34,\n    \"type\": \"Monitor\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Get Boats",
+					"item": [
+						{
+							"name": "Get All Boats For User1 (Authenticated)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(200, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/boats",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Boats For User2 (Authenticated)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(200, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt2}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/boats",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Boats (Not Authenticated)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(401, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/boats",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Boat1 (Authenticated as User1)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(200, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/boats/{{boat1}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{boat1}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Boat1 (Authenticated as User2)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(403, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt2}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/boats/{{boat1}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{boat1}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Change Boats",
+					"item": [
+						{
+							"name": "Change Boat1 Completely",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(303, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Scavenging Voyager\",\n    \"length\": 45,\n    \"type\": \"Royale\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats/{{boat1}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{boat1}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Change Boat1 Partially",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(200, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"type\": \"Monitor\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats/{{boat1}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{boat1}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Add Loads",
+					"item": [
+						{
+							"name": "Add Load1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.environment.set('load1', pm.response.json().id)",
+											"",
+											"custom.validateResponseCode(201, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"volume\": 900,\n    \"content\": \"Legos\",\n    \"creation_date\": \"09/12/2014\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/loads",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Load2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.environment.set('load2', pm.response.json().id)",
+											"",
+											"custom.validateResponseCode(201, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"volume\": 500,\n    \"content\": \"Eggs\",\n    \"creation_date\": \"08/21/2013\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/loads",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Load3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.environment.set('load3', pm.response.json().id)",
+											"",
+											"custom.validateResponseCode(201, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"volume\": 1000,\n    \"content\": \"Steel\",\n    \"creation_date\": \"06/17/2015\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/loads",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Load4",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.environment.set('load4', pm.response.json().id)",
+											"",
+											"custom.validateResponseCode(201, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"volume\": 580,\n    \"content\": \"Umbrellas\",\n    \"creation_date\": \"09/13/2016\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/loads",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Load5",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.environment.set('load5', pm.response.json().id)",
+											"",
+											"custom.validateResponseCode(201, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"volume\": 1750,\n    \"content\": \"Tires\",\n    \"creation_date\": \"11/02/2019\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/loads",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Load6",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.environment.set('load6', pm.response.json().id)",
+											"",
+											"custom.validateResponseCode(201, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"volume\": 800,\n    \"content\": \"Potatoes\",\n    \"creation_date\": \"01/21/2017\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/loads",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Load7",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.environment.set('load7', pm.response.json().id)",
+											"",
+											"custom.validateResponseCode(201, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"volume\": 1450,\n    \"content\": \"Computers\",\n    \"creation_date\": \"04/30/2018\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/loads",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Load8",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.environment.set('load8', pm.response.json().id)",
+											"",
+											"custom.validateResponseCode(201, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"volume\": 1800,\n    \"content\": \"Avocados\",\n    \"creation_date\": \"05/21/2017\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/loads",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Change Loads",
+					"item": [
+						{
+							"name": "Change Load1 Completely",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(303, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"volume\": 1900,\n    \"content\": \"Giraffes\",\n    \"creation_date\": \"07/04/1987\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/loads/{{load1}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads",
+										"{{load1}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Change Load1 Partially",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(200, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"volume\": 6800\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/loads/{{load1}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads",
+										"{{load1}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Get Loads",
+					"item": [
+						{
+							"name": "Get Load1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(200, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/loads/{{load1}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads",
+										"{{load1}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Load2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(200, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/loads/{{load2}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads",
+										"{{load2}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Loads",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(200, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/loads/",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Add Loads to Boats",
+					"item": [
+						{
+							"name": "Add Load1 to Boat1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/boats/{{boat1}}/loads/{{load1}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{boat1}}",
+										"loads",
+										"{{load1}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Load2 to Boat1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/boats/{{boat1}}/loads/{{load2}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{boat1}}",
+										"loads",
+										"{{load2}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Load3 to Boat 1 as User2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(403, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt2}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/boats/{{boat1}}/loads/{{load3}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{boat1}}",
+										"loads",
+										"{{load3}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Load3 to Boat1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/boats/{{boat1}}/loads/{{load3}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{boat1}}",
+										"loads",
+										"{{load3}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Remove Loads From Boats",
+					"item": [
+						{
+							"name": "Remove Load1 from Boat1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/boats/{{boat1}}/loads/{{load1}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{boat1}}",
+										"loads",
+										"{{load1}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Load1 from Boat1 as User2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(403, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt2}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/boats/{{boat1}}/loads/{{load1}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{boat1}}",
+										"loads",
+										"{{load1}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Delete Boats",
+					"item": [
+						{
+							"name": "Remove Boat1User1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Independence\",\n    \"length\": 57,\n    \"type\": \"Cruise Ship\",\n    \"public\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats/{{boat1}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{boat1}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Boat2User1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Independence\",\n    \"length\": 57,\n    \"type\": \"Cruise Ship\",\n    \"public\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats/{{boat2}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{boat2}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Boat3User2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt2}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Independence\",\n    \"length\": 57,\n    \"type\": \"Cruise Ship\",\n    \"public\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats/{{boat3}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{boat3}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remvoe Boat4User2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt2}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Independence\",\n    \"length\": 57,\n    \"type\": \"Cruise Ship\",\n    \"public\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats/{{boat4}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{boat4}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Boat5User1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Independence\",\n    \"length\": 57,\n    \"type\": \"Cruise Ship\",\n    \"public\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats/{{boat5}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{boat5}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Boat6User1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Independence\",\n    \"length\": 57,\n    \"type\": \"Cruise Ship\",\n    \"public\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats/{{boat6}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{boat6}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Boat7User2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt2}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Independence\",\n    \"length\": 57,\n    \"type\": \"Cruise Ship\",\n    \"public\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats/{{boat7}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{boat7}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Boat8User1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Independence\",\n    \"length\": 57,\n    \"type\": \"Cruise Ship\",\n    \"public\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats/{{boat8}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{boat8}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Boat9User1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt1}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Independence\",\n    \"length\": 57,\n    \"type\": \"Cruise Ship\",\n    \"public\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{appurl}}/boats/{{boat9}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"boats",
+										"{{boat9}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Delete Loads",
+					"item": [
+						{
+							"name": "Delete Load1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/loads/{{load1}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads",
+										"{{load1}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Load2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/loads/{{load2}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads",
+										"{{load2}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Load3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/loads/{{load3}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads",
+										"{{load3}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Load4",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/loads/{{load4}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads",
+										"{{load4}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Load5",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/loads/{{load5}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads",
+										"{{load5}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Load6",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/loads/{{load6}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads",
+										"{{load6}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Load7",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/loads/{{load7}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads",
+										"{{load7}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Load8",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(204, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/loads/{{load8}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"loads",
+										"{{load8}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Get Users",
+					"item": [
+						{
+							"name": "Get All Users",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(200, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/users/",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"users",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get User1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(200, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/users/{{user_id1}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"users",
+										"{{user_id1}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get User2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"custom.validateResponseCode(200, pm);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{appurl}}/users/{{user_id2}}",
+									"host": [
+										"{{appurl}}"
+									],
+									"path": [
+										"users",
+										"{{user_id2}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Tests the response code",
+					"let validateResponseCode = function(code, pm){",
+					"    pm.test(`Test request status of ${pm.info.requestName}, expected ${code}, received ${pm.response.code}`, function(){",
+					"        pm.expect(pm.response.code).to.be.equal(code);",
+					"    });",
+					"}",
+					"",
+					"// Tests a header for a value",
+					"let validateHeader = function(headerKey, headerValue, pm){",
+					"    pm.test(`'${headerKey}' header set to '${headerValue}'.`, () => {",
+					"        pm.expect(pm.response.headers.get(headerKey)).to.equal(headerValue)",
+					"    });",
+					"}",
+					"",
+					"// Tests that a body is empty",
+					"let emptyBody = (pm) => {",
+					"    pm.test(\"Body is Empty\", () => {",
+					"        pm.expect(pm.response.size().body).to.equal(0);",
+					"    })",
+					"}",
+					"",
+					"// Tests that the body is JSON.",
+					"let bodyIsJSON = (pm) => {",
+					"    pm.test(\"Body is JSON\", () => {",
+					"        let isJSON = true;",
+					"        try",
+					"        {",
+					"            pm.response.json()",
+					"        } catch (e) {",
+					"            isJSON = false;",
+					"        }",
+					"        pm.expect(isJSON).to.be.true;",
+					"    })",
+					"}",
+					"",
+					"// Tests for the correct body by taking an object and testing each key/value pair",
+					"let bodyIsValid = (pm, object) => {",
+					"    let desiredKeys = Object.keys(object);",
+					"",
+					"    desiredKeys.map(key => {",
+					"        let dKey = key;",
+					"        let dValue = object[key];",
+					"        ",
+					"        pm.test(`Body contains key '${dKey}' with value '${dValue}'`, function() {",
+					"            pm.expect(pm.response.json()[dKey]).to.equal(dValue);",
+					"        })",
+					"    })",
+					"}",
+					"",
+					"// Tests for the correct object in an array",
+					"let objectInArrayIsValid = (pm, index, object) => {",
+					"    let desiredKeys = Object.keys(object);",
+					"",
+					"    desiredKeys.map(key => {",
+					"        let dKey = key;",
+					"        let dValue = object[key];",
+					"        ",
+					"        pm.test(`Body contains key '${dKey}' with value '${dValue}'`, function() {",
+					"            pm.expect(pm.response.json()[index][dKey]).to.equal(dValue);",
+					"        })",
+					"    })",
+					"}",
+					"",
+					"// Tests for error message being correct",
+					"let validErrorMessage = (pm, emsg) => {",
+					"    pm.test(`Operation gracefully fails with message '${emsg}'`, function () {",
+					"        pm.expect(pm.response.json()).to.deep.equal({",
+					"            Error: emsg",
+					"        })",
+					"    });",
+					"}",
+					"",
+					"custom = {",
+					"    validErrorMessage,",
+					"    objectInArrayIsValid,",
+					"    bodyIsValid,",
+					"    bodyIsJSON,",
+					"    emptyBody,",
+					"    validateHeader,",
+					"    validateResponseCode",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
