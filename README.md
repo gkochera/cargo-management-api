@@ -36,7 +36,6 @@ There exist endpoints for servicing Loads and Boats. There are also endpoints fo
 
 ## Loads
 
-|------------|---------------|---------|-----------|---------|
 |Method|Endpoint|Detail|Protected| Paginated|
 |------------|---------------|---------|-----------|---------|
 |POST|/loads|Add a Load| - | - |
@@ -48,7 +47,6 @@ There exist endpoints for servicing Loads and Boats. There are also endpoints fo
 
 ## Boats
 
-|------------|---------------|---------|-----------|---------|
 |Method|Endpoint|Detail|Protected| Paginated|
 |------------|---------------|---------|-----------|---------|
 |POST|/boats|Add a Boat| Yes | - |
@@ -60,7 +58,6 @@ There exist endpoints for servicing Loads and Boats. There are also endpoints fo
 
 ## Loading and Unloading a Boat
 
-|------------|---------------|---------|-----------|---------|
 |Method|Endpoint|Detail|Protected| Paginated|
 |------------|---------------|---------|-----------|---------|
 |PUT|/boats/:boat_id/loads/:load_id|Add a Specific Load to a Specific Boat| Yes | - |
@@ -68,7 +65,6 @@ There exist endpoints for servicing Loads and Boats. There are also endpoints fo
 
 ## Users
 
-|------------|---------------|---------|-----------|---------|
 |Method|Endpoint|Detail|Protected| Paginated|
 |------------|---------------|---------|-----------|---------|
 |GET|/users|Get All Registered Users| - | Yes |
