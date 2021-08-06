@@ -4,9 +4,7 @@
 
 # Documentation
 
-You can find the original PDF ![here](./documentation/cargo-management-api-documentation.pdf) that covers the data model for this project, the access levels for each endpoint as well as a comprehensive overview of accessing each endpoint. It is 66 pages long.
-
-> GitHub has difficulty displaying the first few pages directly in the browser so I recommend clicking download and viewing the PDF that way.
+The application is documented in PDF format ![here](http://kg-final9.ue.r.appspot.com/docs). It covers the data model for this project, the access levels for each endpoint as well as a comprehensive overview of accessing each endpoint. It is 66 pages long.
 
 # About the API
 
