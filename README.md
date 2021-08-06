@@ -57,7 +57,8 @@ There exist endpoints for servicing Loads and Boats. There are also endpoints fo
 {
     "volume": 900,
     "content": "Legos",
-    "creation_date": "09/12/2014"}
+    "creation_date": "09/12/2014"
+}
 ```
 
 > Creation date is *not* auto-generated currently. The user expected to provide their desired value.
