@@ -49,6 +49,10 @@ There exist endpoints for servicing Loads and Boats. There are also endpoints fo
 |PATCH|/loads/:load_id|Change Only Some Details of a Specific Load| When Load is embarked upon a Boat | - | Yes |
 |DELETE|/loads/:load_id|Delete a Specific Load| When Load is embarked upon a Boat | - | - |
 
+### Parameters
+
+`:load_id` refers to the assigned `id` of the `Load` element in the database which is returned in the JSON body after a Load is created or a list of loads is requested.
+
 ### Sample Request Body
 
 ```JSON
@@ -70,6 +74,10 @@ There exist endpoints for servicing Loads and Boats. There are also endpoints fo
 |PUT|/boats/:boat_id|Change All Details of a Specific Boat| Yes | - | Yes |
 |PATCH|/boats/:boat_id|Change Only Some Details of a Specific Boat| Yes | - | Yes |
 |DELETE|/boats/:boat_id|Delete a Specific Boat| Yes | - | - |
+
+### Parameters
+
+`:boat_id` refers to the assigned `id` of the `Boat` element in the database which is returned in the JSON body after a Boat is created or a list of boats is requested.
 
 ### Sample Request Body
 
