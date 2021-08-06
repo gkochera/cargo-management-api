@@ -4,7 +4,7 @@
 
 # Documentation
 
-The application is documented in PDF format ![here](http://kg-final9.ue.r.appspot.com/docs). It covers the data model for this project, the access levels for each endpoint as well as a comprehensive overview of accessing each endpoint. It is 66 pages long.
+The application is documented in PDF format [here](http://kg-final9.ue.r.appspot.com/docs). It covers the data model for this project, the access levels for each endpoint as well as a comprehensive overview of accessing each endpoint. It is 66 pages long.
 
 # About the API
 
